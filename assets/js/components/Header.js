@@ -26,7 +26,7 @@ const Header = {
       <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/5">
         <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
           <a href="#/" data-link class="shrink-0">
-            <span class="font-display text-xl md:text-2xl text-body tracking-[0.15em] font-bold" dir="ltr">${storeConfig.name}</span>
+            <span class="font-fancy text-xl md:text-2xl text-body tracking-[0.15em] font-bold" dir="ltr">${storeConfig.name}</span>
           </a>
           <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
           <div class="flex items-center gap-2">
