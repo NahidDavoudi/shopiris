@@ -1,14 +1,36 @@
 import { storeConfig } from '../config/bootstrap.js';
 import { formatPrice } from '../utils/priceFormatter.js';
-import { renderImageWithFallback } from '../utils/imagePlaceholder.js';
+import { renderImageWithFallback, renderImagePlaceholder } from '../utils/imagePlaceholder.js';
 import { escapeHtml } from '../utils/htmlEscape.js';
 import DOM from '../utils/dom.js';
-import Button from './Button.js';
-import { productRequiresVariantSelection } from '../utils/variantHelpers.js';
+import api from '../core/api.js';
+import Router from '../core/router.js';
+import wishlistStore from '../core/wishlistStore.js';
+import { productRequiresVariantSelection, quickAddNeedsProductPage } from '../utils/variantHelpers.js';
+
+function syncWishlistButtons(id, active) {
+  document.querySelectorAll(`.card-wishlist-btn[data-product-id="${id}"]`).forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(active));
+    const plus = btn.querySelector('.card-btn-plus');
+    if (plus) plus.textContent = active ? '✓' : '+';
+  });
+}
+
+async function defaultQuickBuy(id, btn) {
+  const t = storeConfig.texts.product;
+  if (quickAddNeedsProductPage(btn)) {
+    Router.go(`/products/${id}`);
+    api.utils.toast(t.variantRequired || 'برای این محصول ابتدا سایز/رنگ را انتخاب کنید.', 'info', 2500);
+    return;
+  }
+  await api.cart.add(id, 1);
+  window.loadCartCount?.();
+  api.utils.toast(t.addedToCart || 'به سبد اضافه شد', 'success', 2000);
+}
 
 const ProductCard = {
   render(p) {
-    const ui = storeConfig.ui;
+    const t = storeConfig.texts.product;
     const img = p.images?.find((i) => i.is_main)?.url
       || p.images?.[0]?.url
       || p.main_image
@@ -17,77 +39,89 @@ const ProductCard = {
     const price = formatPrice(p.price);
     const href = DOM.hashHref('product', { id: p.id });
     const name = escapeHtml(p.name);
-    const categoryName = escapeHtml(p.category_name || '');
+    const subtitle = escapeHtml(p.short_description || p.category_name || '');
     const needsVariant = productRequiresVariantSelection(p);
+    const outOfStock = Number(p.stock) === 0;
+    const wished = wishlistStore.has(p.id);
 
-    const lowStock = p.stock <= 2 && p.stock > 0
-      ? `<span class="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10">آخرین موجودی</span>`
-      : '';
-    const outOfStock = p.stock === 0
-      ? `<div class="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-10"><span class="text-sm text-white/80 font-medium">ناموجود</span></div>`
-      : '';
+    const image = img
+      ? renderImageWithFallback({
+          src: img,
+          alt: p.name,
+          imgClass: 'w-full h-full object-contain transition-opacity duration-500 group-hover:opacity-90',
+          iconSize: 'w-8 h-8',
+        })
+      : renderImagePlaceholder('w-8 h-8');
 
-    const addBtn = Button.render({
-      variant: 'text',
-      size: 'sm',
-      label: 'wishlist +',
-      className: 'add-to-cart-quick shrink-0',
-      attrs: {
-        'data-product-id': p.id,
-        'data-product-type': p.product_type || 'simple',
-        'data-has-variants': needsVariant ? '1' : '0',
-        title: needsVariant ? 'انتخاب سایز/رنگ' : 'افزودن به سبد',
-      },
-      disabled: p.stock === 0,
-    });
+    const quickBuyControl = outOfStock
+      ? `<span class="text-[11px] uppercase tracking-[0.15em] text-muted">${t.outOfStock || 'Out of stock'}</span>`
+      : `<button type="button" class="card-quick-buy text-[11px] font-bold uppercase tracking-[0.15em] text-body transition-opacity hover:opacity-60"
+                data-product-id="${p.id}"
+                data-product-type="${escapeHtml(p.product_type || 'simple')}"
+                data-has-variants="${needsVariant ? '1' : '0'}">
+            <span class="card-btn-label">${t.cardQuickBuy || 'Quick Buy'}</span> <span class="card-btn-plus">+</span>
+        </button>`;
 
     return `
-      <a href="${href}" data-link
-         class="group block iris-card ${ui.cardRadius} ${ui.cardHover}">
-        <div class="relative aspect-square overflow-hidden bg-[#f5f5f7]">
-          ${lowStock}${outOfStock}
-          ${renderImageWithFallback({
-      src: img,
-      alt: p.name,
-      imgClass: 'w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out',
-    })}
+      <div class="product-card group flex flex-col font-display" data-product-id="${p.id}">
+        <a href="${href}" data-link class="relative block aspect-square overflow-hidden bg-white mb-6">
+          ${image}
+        </a>
+        <h3 class="text-[13px] font-bold uppercase tracking-[0.15em] text-body leading-relaxed">
+          <a href="${href}" data-link class="transition-opacity hover:opacity-70">${name}</a>
+        </h3>
+        ${subtitle ? `<p class="mt-1 text-[13px] font-light uppercase tracking-[0.15em] text-muted leading-relaxed">${subtitle}</p>` : ''}
+        <p class="mt-4 text-[13px] tracking-wide text-body" dir="ltr">${price}</p>
+        <div class="mt-5 flex items-center justify-between gap-3">
+          ${quickBuyControl}
+          <button type="button" class="card-wishlist-btn text-[11px] font-bold uppercase tracking-[0.15em] text-body transition-opacity hover:opacity-60"
+                  data-product-id="${p.id}" aria-pressed="${wished}">
+            <span class="card-btn-label">${t.cardWishlist || 'Wishlist'}</span> <span class="card-btn-plus">${wished ? '✓' : '+'}</span>
+          </button>
         </div>
-        <div class="p-4 md:p-5 text-right">
-          <p class="text-[10px] text-muted mb-1.5 tracking-wide uppercase">${categoryName}</p>
-          <h3 class="text-sm font-semibold text-body mb-3 line-clamp-2 leading-snug">${name}</h3>
-          <div class="flex items-center justify-between gap-2">
-            ${addBtn}
-            <span class="text-sm font-bold text-body">${price}</span>
-          </div>
-        </div>
-      </a>`;
+      </div>`;
   },
 
   bind(container, callbacks = {}) {
-    container.querySelectorAll('.add-to-cart-quick').forEach((btn) => {
+    container.querySelectorAll('.card-quick-buy').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
         const id = btn.dataset.productId;
         if (!id) return;
-        const orig = btn.querySelector('.btn-inner')?.textContent || btn.textContent;
-        btn.disabled = true;
+
+        const label = btn.querySelector('.card-btn-label');
+        const plus = btn.querySelector('.card-btn-plus');
+        const origLabel = label?.textContent ?? '';
+        const origPlus = plus?.textContent ?? '';
+
         btn.setAttribute('aria-disabled', 'true');
-        const inner = btn.querySelector('.btn-inner');
-        if (inner) inner.textContent = '✓';
-        else btn.textContent = '✓';
-        btn.classList.add('is-success');
+        btn.classList.add('opacity-40', 'pointer-events-none');
         try {
-          await callbacks.onAddToCart?.(id, btn);
-        } catch (_) { /* page handles toast */ }
+          if (callbacks.onQuickBuy) await callbacks.onQuickBuy(id, btn);
+          else await defaultQuickBuy(id, btn);
+          if (label) label.textContent = '✓';
+          if (plus) plus.textContent = '';
+        } catch (_) { /* page shows toast */ }
         setTimeout(() => {
-          btn.disabled = false;
           btn.removeAttribute('aria-disabled');
-          if (inner) inner.textContent = orig;
-          else btn.textContent = orig;
-          btn.classList.remove('is-success');
-        }, 1800);
+          btn.classList.remove('opacity-40', 'pointer-events-none');
+          if (label) label.textContent = origLabel;
+          if (plus) plus.textContent = origPlus;
+        }, 1500);
+      });
+    });
+
+    container.querySelectorAll('.card-wishlist-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.dataset.productId;
+        if (!id) return;
+        const active = wishlistStore.toggle(id);
+        syncWishlistButtons(id, active);
+        callbacks.onToggleWishlist?.(id, active);
       });
     });
   },

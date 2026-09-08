@@ -108,9 +108,9 @@ const ProductInfo = {
       : outOfStock ? (t.outOfStock || 'Out of stock') : '';
 
     return `
-      <div class="product-info max-w-xl mx-auto px-4">
+      <div class="product-info max-w-xl mx-auto px-4 font-display">
         <h1 class="text-lg md:text-2xl font-bold uppercase tracking-[0.25em] text-body leading-relaxed">${safeName}</h1>
-        ${desc ? `<p class="mt-2 text-sm uppercase tracking-[0.15em] text-muted">${desc}</p>` : ''}
+        ${desc ? `<p class="mt-2 text-sm font-light uppercase tracking-[0.15em] text-muted">${desc}</p>` : ''}
 
         ${axesHtml ? `<div id="product-variant-selectors" class="mt-8">${axesHtml}</div>` : ''}
 

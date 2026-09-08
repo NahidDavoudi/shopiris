@@ -10,7 +10,8 @@
   --color-muted: #86868b;
   --color-text-dim: rgba(0, 0, 0, 0.55);
   --color-body-text: #1d1d1f;
-  --font-display: 'Montserrat', sans-serif;
+  --font-display: 'Montserrat', 'Vazirmatn', sans-serif;
+  --font-vazir: 'Vazirmatn', 'Montserrat', sans-serif;
   --font-felipa: 'Felipa', sans-serif;
   --font-fancy: 'AlexBrush';
 }

@@ -8,7 +8,6 @@ import HeroSection from '../components/HeroSection.js';
 import FeatureSection from '../components/FeatureSection.js';
 import FeaturedCarousel from '../components/FeaturedCarousel.js';
 import { storeConfig } from '../config/bootstrap.js';
-import { quickAddNeedsProductPage } from '../utils/variantHelpers.js';
 
 const SWIPER_DEFAULTS = {
   slidesPerView: 1.5,
@@ -23,20 +22,7 @@ const SWIPER_DEFAULTS = {
 };
 
 function bindProductCards(container) {
-  container.querySelectorAll('.swiper-slide').forEach((slide) => {
-    ProductCard.bind(slide, {
-      onAddToCart: async (id, btn) => {
-        if (quickAddNeedsProductPage(btn)) {
-          Router.go(`/products/${id}`);
-          api.utils.toast(storeConfig.texts.product.variantRequired || 'برای این محصول ابتدا سایز/رنگ را انتخاب کنید.', 'info', 2500);
-          return;
-        }
-        await api.cart.add(id, 1);
-        window.loadCartCount?.();
-        api.utils.toast('به سبد اضافه شد', 'success', 2000);
-      },
-    });
-  });
+  ProductCard.bind(container);
 }
 
 function setHomeTexts() {

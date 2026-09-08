@@ -213,7 +213,10 @@ Router.onEnter('shop', async function (params) {
       }
 
       hide('shop-empty');
-      if (grid) grid.innerHTML = slice.map((p) => ShopProductCard.render(p)).join('');
+      if (grid) {
+        grid.innerHTML = slice.map((p) => ShopProductCard.render(p)).join('');
+        ShopProductCard.bind(grid);
+      }
 
       if (loadMoreEl) {
         if (visibleCount < total) {
