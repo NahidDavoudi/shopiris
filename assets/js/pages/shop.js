@@ -197,7 +197,7 @@ Router.onEnter('shop', async function (params) {
     const filtered = applyClientFilters(allProducts, params);
     const total = filtered.length;
 
-    text('product-count', `${total.toLocaleString('fa-IR')} ${t.productsFound}`);
+    text('product-count', `${total} ${t.productsFound}`);
 
     const grid = document.getElementById('products-grid');
     const loadMoreEl = document.getElementById('shop-load-more');
