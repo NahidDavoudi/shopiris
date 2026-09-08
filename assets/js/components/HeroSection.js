@@ -57,7 +57,7 @@ const HeroSection = {
         </div>
         <div class="absolute bottom-4 md:bottom-12 left-0 right-0 z-10 px-4 md:px-6">
           <div class="max-w-[1280px] mx-auto flex items-end justify-between gap-4">
-            <div class="max-w-sm text-right" dir="ltr">
+            <div class="max-w-sm text-right pb-4">
               <h1 class="font-display font-extrabold text-3xl sm:text-4xl md:text-6xl text-white mb-2 leading-none drop-shadow-lg">${hero.title}</h1>
               ${hero.subtitle ? `<p class="text-white/75 text-sm md:text-base">${hero.subtitle}</p>` : ''}
             </div>
