@@ -1,27 +1,17 @@
 /**
-
- * store.config.js — fallback تنظیمات فروشگاه (وقتی API در دسترس نیست)
-
- * منبع اصلی: GET /settings — core/storeSettings.js
-
+ * store.config.js — fallback store settings (when API is unavailable)
+ * Primary source: GET /settings — core/storeSettings.js
  */
-
 export default {
-
   name: 'IRIS',
-
   logo: 'assets/images/logo.png',
-
   favicon: 'assets/images/logo.png',
 
   hero: {
-
     image: 'assets/images/hero.png',
-
     images: [
       { url: 'assets/images/hero.png', alt: 'IRIS', order: 1 },
     ],
-
     slider: {
       maxImages: 3,
       displayDurationMs: 5000,
@@ -29,1396 +19,770 @@ export default {
       kenBurnsScaleStart: 1.08,
       kenBurnsScaleEnd: 1.0,
     },
-
     title: 'IRIS',
-
-    subtitle: 'لباس‌های Y2K و لانگ‌اسلیوهای خاص',
-
-    ctaPrimary: 'کاوش مجموعه',
-
-    ctaSecondary: 'دسته‌بندی‌ها',
-
+    subtitle: 'Y2K clothing and unique long sleeves',
+    ctaPrimary: 'Explore Collection',
+    ctaSecondary: 'Categories',
   },
-
-
 
   feature: {
-
     image: 'assets/images/poster.png',
-
     title: 'MACHINED PERFECTION',
-
-    description: 'هر قطعه با دقت صنعتی ساخته شده — از پارچه‌های سنگین تا چاپ کروم با فیت آناتومیک. طراحی شده برای کسانی که جزئیات را می‌بینند.',
-
-    cta: 'مشاهده آرشیو',
-
+    description: 'Every piece is crafted with industrial precision — from heavyweight fabrics to chrome prints with an anatomical fit. Designed for those who notice details.',
+    cta: 'View Archive',
     ctaHref: '#/shop',
-
     items: [
-
       { icon: 'layers', label: 'HEAVYWEIGHT COTTONS' },
-
       { icon: 'sparkles', label: 'SCREEN PRINTED CHROME' },
-
       { icon: 'scan', label: 'ANATOMICAL FIT' },
-
     ],
-
     card: {
-
       tag: 'ARCHIVE',
-
       title: 'Skull Tank — SS24',
-
-      subtitle: 'Limited drop · ۴۸ عدد',
-
+      subtitle: 'Limited drop · 48 pieces',
     },
-
   },
-
-
 
   theme: {
-
     primary: '#000000',
-
     primaryHover: '#333333',
-
     background: '#ffffff',
-
     surface: '#f5f5f7',
-
     card: '#f0f0f2',
-
     border: '#d2d2d7',
-
     muted: '#86868b',
-
     textDim: 'rgba(0, 0, 0, 0.55)',
-
     bodyText: '#1d1d1f',
-
   },
-
-
 
   fonts: {
-
     body: 'Vazirmatn',
-
     display: 'Agbalumo',
-
     felipa: 'Felipa',
-
   },
 
-
-
   shipping: {
-
     freeFrom: 1500000,
-
     standardCost: 50000,
-
     minOrder: 0,
-
   },
 
   data: {
-
     iranLocations: 'assets/data/provinces_cities_counties.json',
-
   },
 
-
-
   payment: {
-
     cardNumber: '',
-
     cardOwner: '',
-
     method: 'card_to_card',
-
-    unavailableMessage: 'اطلاعات کارت از پنل مدیریت تنظیم نشده است. لطفاً با پشتیبانی تماس بگیرید.',
-
+    unavailableMessage: 'Card information has not been set in the admin panel. Please contact support.',
   },
 
   enamad: {
-
     html: '',
-
   },
 
-
-
   ui: {
-
     cardRadius: 'rounded-[28px]',
-
     btnRadius: 'rounded-full',
-
     btnAluminum: 'btn-aluminum',
-
     btnGlass: 'btn-glass',
-
     btnPrimary: 'btn-aluminum',
-
     cardBase: 'bg-white border border-black/5',
-
     cardHover: 'hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] hover:border-black/10 transition-all duration-500',
-
   },
 
   carousel: {
-
     featured: {
-
       viewAllHref: '#/shop?featured=1',
-
       speed: 1.5,
-
       gap: 16,
-
       direction: 'left',
-
       cardRadius: 12,
-
       backgroundColor: '#ffffff',
-
       height: 420,
-
       heightMd: 480,
-
       mobileBreakpoint: 600,
-
       tabletBreakpoint: 1024,
-
       pauseOnHover: true,
-
     },
-
   },
-
-
 
   auth: {
-
     smsOtpEnabled: false,
-
   },
 
-
-
   texts: {
-
     nav: [
-
-      { href: '#/', label: 'خانه' },
-
-      { href: '#/shop', label: 'فروشگاه' },
-
-      { href: '#/categories', label: 'دسته‌بندی‌ها' },
-
-      { href: '#/orders', label: 'سفارشات' },
-
+      { href: '#/', label: 'Home' },
+      { href: '#/shop', label: 'Shop' },
+      { href: '#/categories', label: 'Categories' },
+      { href: '#/orders', label: 'Orders' },
     ],
 
     home: {
-
-      featured: 'محبوب‌ترین‌ها',
-
-      newest: 'جدیدترین محصولات',
-
-      viewAll: 'همه',
-
+      featured: 'Bestsellers',
+      newest: 'Newest Products',
+      viewAll: 'All',
     },
 
     shop: {
-
-      allProducts: 'همه محصولات',
-
-      filtersTitle: 'فیلترها',
-
-      sizeLabel: 'سایز',
-
-      colorLabel: 'رنگ',
-
-      priceLabel: 'محدوده قیمت (تومان)',
-
-      priceFromLabel: 'از',
-
-      priceToLabel: 'تا',
-
-      priceBoundsHint: 'حداقل و حداکثر قیمت محصولات:',
-
-      applyFilters: 'اعمال فیلترها',
-
-      clearFilters: 'پاک کردن فیلترها',
-
-      showMore: 'نمایش بیشتر',
-
-      productsFound: 'محصول یافت شد',
-
-      loading: 'در حال بارگذاری...',
-
-      empty: 'محصولی یافت نشد.',
-
-      emptyAction: 'بازگشت',
-
-      filterToggle: 'فیلتر',
-
-      breadcrumbHome: 'خانه',
-
-      breadcrumbShop: 'فروشگاه',
-
+      allProducts: 'All Products',
+      filtersTitle: 'Filters',
+      sizeLabel: 'Size',
+      colorLabel: 'Color',
+      priceLabel: 'Price Range (Toman)',
+      priceFromLabel: 'From',
+      priceToLabel: 'To',
+      priceBoundsHint: 'Min and max product price:',
+      applyFilters: 'Apply Filters',
+      clearFilters: 'Clear Filters',
+      showMore: 'Show More',
+      productsFound: 'product(s) found',
+      loading: 'Loading...',
+      empty: 'No products found.',
+      emptyAction: 'Back',
+      filterToggle: 'Filter',
+      breadcrumbHome: 'Home',
+      breadcrumbShop: 'Shop',
       pageSize: 8,
-
     },
 
     product: {
-
-      loading: 'در حال بارگذاری...',
-
+      loading: 'Loading...',
       refPrefix: 'REF:',
-
-      sizeLabel: 'سایز',
-
-      sizeGuide: 'راهنمای سایز',
-
+      sizeLabel: 'Size',
+      sizeGuide: 'Size Guide',
       sizeGuideHref: '#',
-
-      addToCart: 'افزودن به سبد خرید',
-
-      quickBuy: 'خرید فوری',
-
-      addedToCart: 'محصول به سبد خرید اضافه شد',
-
-      viewCart: 'مشاهده سبد خرید',
-
-      detailsTitle: 'جزئیات و ترکیبات',
-
-      shippingTitle: 'ارسال و مرجوعی',
-
-      shippingText: 'ارسال رایگان برای سفارش‌های بالای ۱،۵۰۰،۰۰۰ تومان. امکان مرجوعی تا ۷ روز پس از تحویل برای محصولات استفاده‌نشده.',
-
-      completeStyle: 'تکمیل استایل',
-
-      viewAll: 'مشاهده همه',
-
+      addToCart: 'Add to Cart',
+      quickBuy: 'Buy Now',
+      addedToCart: 'Product added to cart',
+      viewCart: 'View Cart',
+      detailsTitle: 'Details & Composition',
+      shippingTitle: 'Shipping & Returns',
+      shippingText: 'Free shipping for orders over 1,500,000 Toman. Returns accepted within 7 days of delivery for unused products.',
+      completeStyle: 'Complete the Look',
+      viewAll: 'View All',
       defaultSizes: ['XS', 'S', 'M', 'L'],
-
-      variantSetupIncomplete: 'سایزبندی و رنگ‌بندی این محصول هنوز کامل نشده است. لطفاً با پشتیبانی تماس بگیرید.',
-
-      selectVariant: 'لطفاً گزینه محصول را انتخاب کنید',
-
-      variantRequired: 'برای این محصول ابتدا سایز/رنگ را در صفحه محصول انتخاب کنید.',
-
+      variantSetupIncomplete: 'Sizing and color options for this product are not yet complete. Please contact support.',
+      selectVariant: 'Please select product options',
+      variantRequired: 'Please select size/color on the product page first.',
       detailItems: [
-
-        'چاپ با کیفیت بالا',
-
-        'لبه‌های خام و بافت طبیعی',
-
-        'شستشو با آب سرد و پشت‌و‌رو',
-
+        'High-quality print',
+        'Raw edges and natural texture',
+        'Machine wash cold, inside out',
       ],
-
     },
 
     footer: {
-
-      tagline: 'آیریس — فروشگاه لباس‌های Y2K و لانگ‌اسلیوهای خاص.',
-
-      support: 'پشتیبانی ۷ روز هفته',
-
+      tagline: 'IRIS — Y2K clothing and unique long sleeve store.',
+      support: 'Support 7 days a week',
       social: '@iris',
-
-      copyright: '© ۱۴۰۴ آیریس — تمام حقوق محفوظ است',
-
+      copyright: '© 2025 IRIS — All rights reserved',
     },
 
     auth: {
-
-      registerSubmit: 'ثبت‌نام',
-
-      loginWithSms: 'ورود با پیامک',
-
-      loginWithPassword: 'ورود با رمز عبور',
-
-      sendCode: 'ارسال کد تایید',
-
-      resendCode: 'ارسال مجدد کد',
-
-      verifyCode: 'تایید و ورود',
-
-      verifyAndRegister: 'تایید و ساخت حساب',
-
-      otpSent: 'کد تایید به شماره شما ارسال شد',
-
-      otpPlaceholder: 'کد ۵ رقمی',
-
-      otpExpires: 'اعتبار کد',
-
-      seconds: 'ثانیه',
-
-      back: 'بازگشت',
-
-      sending: 'در حال ارسال...',
-
-      verifying: 'در حال تایید...',
-
+      registerSubmit: 'Sign Up',
+      loginWithSms: 'Login with SMS',
+      loginWithPassword: 'Login with Password',
+      sendCode: 'Send Verification Code',
+      resendCode: 'Resend Code',
+      verifyCode: 'Verify & Login',
+      verifyAndRegister: 'Verify & Create Account',
+      otpSent: 'Verification code sent to your number',
+      otpPlaceholder: '5-digit code',
+      otpExpires: 'Code expires in',
+      seconds: 'seconds',
+      back: 'Back',
+      sending: 'Sending...',
+      verifying: 'Verifying...',
     },
 
     legal: {
-
       footerLinks: [
-
-        { href: '#/about', label: 'درباره ما' },
-
-        { href: '#/contact', label: 'تماس با ما' },
-
-        { href: '#/terms', label: 'قوانین و مقررات' },
-
-        { href: '#/privacy', label: 'حریم خصوصی' },
-
-        { href: '#/refund', label: 'بازگشت وجه' },
-
-        { href: '#/faq', label: 'سوالات متداول' },
-
+        { href: '#/about', label: 'About Us' },
+        { href: '#/contact', label: 'Contact Us' },
+        { href: '#/terms', label: 'Terms & Conditions' },
+        { href: '#/privacy', label: 'Privacy Policy' },
+        { href: '#/refund', label: 'Refund Policy' },
+        { href: '#/faq', label: 'FAQ' },
       ],
-
-      lastUpdated: '۱۴۰۴/۰۳/۰۱',
+      lastUpdated: '2025/05/22',
 
       about: {
-
-        meta: 'آشنایی با فروشگاه آنلاین لباس آیریس — برند ایرانی تخصصی پوشاک Y2K و لانگ‌اسلیو با ارسال سراسر کشور.',
-
-        title: 'درباره ما',
-
-        subtitle: 'داستان آیریس؛ جایی که مد معاصر با هویت ایرانی درمی‌آمیزد.',
-
+        meta: 'Learn about IRIS online clothing store — an Iranian brand specializing in Y2K fashion and unique long sleeves with nationwide shipping.',
+        title: 'About Us',
+        subtitle: 'The story of IRIS; where contemporary fashion meets Iranian identity.',
         icon: 'sparkles',
-
-        intro: 'آیریس در سال ۱۴۰۲ با هدف ارائه پوشاک خاص و باکیفیت برای نسل جوان ایران تأسیس شد. ما مجموعه‌ای از لباس‌های Y2K، لانگ‌اسلیوهای طراحی‌شده و استریت‌ویر منحصربه‌فرد را با تمرکز بر جزئیات، دوخت دقیق و پارچه‌های باکیفیت عرضه می‌کنیم. هر محصول با دقت انتخاب و کنترل کیفیت می‌شود تا تجربه‌ای مطمئن و لذت‌بخش از خرید آنلاین برای شما فراهم شود.',
-
+        intro: 'IRIS was established in 2023 with the goal of offering unique, high-quality clothing to Iran\'s young generation. We provide a collection of Y2K apparel, designed long sleeves, and distinctive streetwear with a focus on details, precise stitching, and quality fabrics. Every product is carefully selected and quality-controlled to ensure a reliable and enjoyable online shopping experience for you.',
         sectionTitles: {
-
-          intro: 'معرفی آیریس',
-
-          mission: 'مأموریت ما',
-
-          vision: 'چشم‌انداز ما',
-
-          whyChooseUs: 'چرا آیریس؟',
-
-          stats: 'آیریس در یک نگاه',
-
-          team: 'تیم ما',
-
+          intro: 'Introduction to IRIS',
+          mission: 'Our Mission',
+          vision: 'Our Vision',
+          whyChooseUs: 'Why IRIS?',
+          stats: 'IRIS at a Glance',
+          team: 'Our Team',
         },
-
-        mission: 'ارائه پوشاک مدرن و باکیفیت با قیمت منصفانه، حفظ استانداردهای بالای تولید و ایجاد ارتباطی صادقانه با مشتریان در سراسر ایران.',
-
-        vision: 'تبدیل شدن به مرجع آنلاین پوشاک استریت‌ویر و Y2K در ایران و شناخته شدن به‌عنوان برندی که کیفیت، اصالت و رضایت مشتری را در اولویت قرار می‌دهد.',
-
+        mission: 'Providing modern, high-quality clothing at fair prices, maintaining high production standards, and building honest relationships with customers across Iran.',
+        vision: 'To become Iran\'s leading online destination for streetwear and Y2K fashion, recognized as a brand that prioritizes quality, authenticity, and customer satisfaction.',
         whyChooseUs: [
-
-          { icon: 'shield-check', title: 'خرید مطمئن', desc: 'پرداخت امن و پشتیبانی پاسخگو در تمام مراحل سفارش.' },
-
-          { icon: 'truck', title: 'ارسال سریع', desc: 'ارسال به سراسر کشور با بسته‌بندی ایمن و پیگیری آنلاین.' },
-
-          { icon: 'refresh-ccw', title: 'مرجوعی آسان', desc: 'امکان بازگشت محصول تا ۷ روز پس از تحویل طبق شرایط.' },
-
-          { icon: 'gem', title: 'کیفیت برتر', desc: 'انتخاب پارچه‌های مرغوب و کنترل کیفیت پیش از ارسال.' },
-
+          { icon: 'shield-check', title: 'Secure Shopping', desc: 'Secure payment and responsive support throughout the order process.' },
+          { icon: 'truck', title: 'Fast Shipping', desc: 'Nationwide delivery with secure packaging and online tracking.' },
+          { icon: 'refresh-ccw', title: 'Easy Returns', desc: 'Return products within 7 days of delivery, subject to terms.' },
+          { icon: 'gem', title: 'Superior Quality', desc: 'Premium fabric selection and quality control before shipping.' },
         ],
-
         stats: [
-
-          { value: '۵۰۰۰+', label: 'مشتری راضی' },
-
-          { value: '۲۰۰+', label: 'محصول فعال' },
-
-          { value: '۳۱', label: 'استان تحت پوشش' },
-
-          { value: '۹۸٪', label: 'رضایت خریداران' },
-
+          { value: '5,000+', label: 'Happy Customers' },
+          { value: '200+', label: 'Active Products' },
+          { value: '31', label: 'Provinces Covered' },
+          { value: '98%', label: 'Customer Satisfaction' },
         ],
-
         team: [
-
-          { name: 'سارا محمدی', role: 'مدیرعامل و بنیان‌گذار', avatar: '' },
-
-          { name: 'امیر حسینی', role: 'مدیر طراحی و تولید', avatar: '' },
-
-          { name: 'نیلوفر کریمی', role: 'مدیر پشتیبانی مشتریان', avatar: '' },
-
-          { name: 'رضا احمدی', role: 'مدیر فنی و فروشگاه آنلاین', avatar: '' },
-
+          { name: 'Sara Mohammadi', role: 'CEO & Founder', avatar: '' },
+          { name: 'Amir Hosseini', role: 'Design & Production Director', avatar: '' },
+          { name: 'Niloofar Karimi', role: 'Customer Support Manager', avatar: '' },
+          { name: 'Reza Ahmadi', role: 'Technical & Online Store Manager', avatar: '' },
         ],
-
       },
 
       contact: {
-
-        meta: 'راه‌های ارتباطی با فروشگاه آیریس — تلفن، ایمیل، آدرس، ساعات کاری و فرم تماس برای پشتیبانی و سوالات.',
-
-        title: 'تماس با ما',
-
-        subtitle: 'تیم پشتیبانی آیریس آماده پاسخگویی به سوالات شما درباره محصولات، سفارشات و همکاری است.',
-
+        meta: 'Ways to reach IRIS store — phone, email, address, hours, and contact form for support and inquiries.',
+        title: 'Contact Us',
+        subtitle: 'The IRIS support team is ready to answer your questions about products, orders, and partnerships.',
         icon: 'message-circle',
-
-        formSectionTitle: 'راه‌های ارتباطی',
-
-        formUnavailable: 'فرم تماس به‌زودی فعال می‌شود. لطفاً از اطلاعات تماس بالا استفاده کنید.',
-
-        phone: { label: 'تلفن تماس', value: '۰۲۱-۹۱۰۰۱۲۳۴', note: 'شنبه تا پنج‌شنبه، ۹ تا ۱۸' },
-
-        email: { label: 'ایمیل', value: 'support@iris-fashion.ir', note: 'پاسخ‌دهی حداکثر تا ۲۴ ساعت' },
-
-        address: { label: 'آدرس', value: 'تهران، خیابان ولیعصر، بالاتر از پارک ساعی، پلاک ۱۲۳۴، واحد ۵', note: 'مراجعه حضوری با هماهنگی قبلی' },
-
-        hours: { label: 'ساعات کاری', value: 'شنبه تا پنج‌شنبه: ۹:۰۰ – ۱۸:۰۰', note: 'جمعه‌ها و تعطیلات رسمی تعطیل' },
-
-        mapPlaceholder: 'نقشه محل فروشگاه',
-
+        formSectionTitle: 'Contact Information',
+        formUnavailable: 'The contact form will be active soon. Please use the contact details above.',
+        phone: { label: 'Phone', value: '+98-21-91001234', note: 'Sat–Thu, 9 AM – 6 PM' },
+        email: { label: 'Email', value: 'support@iris-fashion.ir', note: 'Response within 24 hours' },
+        address: { label: 'Address', value: 'Tehran, Valiasr St., above Saei Park, No. 1234, Unit 5', note: 'By appointment only' },
+        hours: { label: 'Business Hours', value: 'Sat–Thu: 9:00 AM – 6:00 PM', note: 'Closed on Fridays and public holidays' },
+        mapPlaceholder: 'Store Location Map',
         form: {
-
-          nameLabel: 'نام و نام‌خانوادگی',
-
-          namePlaceholder: 'مثال: علی رضایی',
-
-          emailLabel: 'ایمیل',
-
+          nameLabel: 'Full Name',
+          namePlaceholder: 'e.g. Ali Rezaei',
+          emailLabel: 'Email',
           emailPlaceholder: 'example@email.com',
-
-          phoneLabel: 'شماره موبایل',
-
-          phonePlaceholder: '۰۹۱۲۳۴۵۶۷۸۹',
-
-          subjectLabel: 'موضوع',
-
-          subjectPlaceholder: 'انتخاب موضوع',
-
-          subjects: ['پیگیری سفارش', 'سوال درباره محصول', 'مرجوعی و بازگشت وجه', 'همکاری و عمده‌فروشی', 'سایر موارد'],
-
-          messageLabel: 'پیام شما',
-
-          messagePlaceholder: 'پیام خود را بنویسید...',
-
-          submit: 'ارسال پیام',
-
-          success: 'پیام شما با موفقیت ثبت شد. به زودی با شما تماس می‌گیریم.',
-
+          phoneLabel: 'Mobile Number',
+          phonePlaceholder: '09123456789',
+          subjectLabel: 'Subject',
+          subjectPlaceholder: 'Select a subject',
+          subjects: ['Order Tracking', 'Product Inquiry', 'Returns & Refunds', 'Wholesale & Collaboration', 'Other'],
+          messageLabel: 'Your Message',
+          messagePlaceholder: 'Write your message...',
+          submit: 'Send Message',
+          success: 'Your message has been sent successfully. We will contact you soon.',
         },
-
       },
 
       terms: {
-
-        meta: 'قوانین و مقررات استفاده از فروشگاه آنلاین آیریس — شرایط سفارش، پرداخت، تعهدات طرفین و حقوق مالکیت معنوی.',
-
-        title: 'قوانین و مقررات',
-
-        subtitle: 'لطفاً پیش از ثبت سفارش، قوانین زیر را با دقت مطالعه فرمایید.',
-
+        meta: 'Terms and conditions for using the IRIS online store — order, payment, obligations, and intellectual property rights.',
+        title: 'Terms & Conditions',
+        subtitle: 'Please read the following terms carefully before placing an order.',
         icon: 'scale',
-
         sections: [
-
           {
-
-            title: 'تعاریف و پذیرش قوانین',
-
+            title: 'Definitions and Acceptance of Terms',
             content: [
-
-              'منظور از «فروشگاه» وب‌سایت آیریس و کلیه خدمات آنلاین مرتبط است. «کاربر» هر شخصی است که از خدمات فروشگاه استفاده می‌کند.',
-
-              'ثبت‌نام، ورود یا ثبت سفارش به منزله پذیرش کامل این قوانین و مقررات است.',
-
+              '"Store" refers to the IRIS website and all related online services. "User" means any person who uses the store\'s services.',
+              'Registration, login, or placing an order constitutes full acceptance of these terms and conditions.',
             ],
-
           },
-
           {
-
-            title: 'تعهدات کاربر',
-
+            title: 'User Obligations',
             items: [
-
-              'ارائه اطلاعات صحیح و کامل هنگام ثبت‌نام و ثبت سفارش.',
-
-              'حفظ امنیت حساب کاربری و عدم افشای رمز عبور به دیگران.',
-
-              'استفاده از فروشگاه صرفاً برای اهداف قانونی و شخصی.',
-
-              'عدم سوءاستفاده از کدهای تخفیف، سیستم پرداخت یا فرآیند سفارش.',
-
-              'رعایت قوانین جمهوری اسلامی ایران در تمام تعاملات.',
-
+              'Providing accurate and complete information during registration and order placement.',
+              'Maintaining account security and not disclosing your password to others.',
+              'Using the store solely for lawful and personal purposes.',
+              'Not misusing discount codes, payment systems, or the order process.',
+              'Complying with the laws of the Islamic Republic of Iran in all interactions.',
             ],
-
           },
-
           {
-
-            title: 'تعهدات فروشگاه',
-
+            title: 'Store Obligations',
             items: [
-
-              'نمایش دقیق مشخصات، تصاویر و قیمت محصولات تا حد امکان.',
-
-              'ارسال سفارش در بازه زمانی اعلام‌شده پس از تأیید پرداخت.',
-
-              'حفظ امنیت اطلاعات شخصی کاربران طبق سیاست حریم خصوصی.',
-
-              'پاسخگویی به درخواست‌ها و شکایات مشتریان در اسرع وقت.',
-
-              'رعایت قوانین تجارت الکترونیک و حمایت از حقوق مصرف‌کننده.',
-
+              'Displaying accurate product specifications, images, and prices to the best of our ability.',
+              'Shipping orders within the stated timeframe after payment confirmation.',
+              'Protecting users\' personal information in accordance with the privacy policy.',
+              'Responding to customer inquiries and complaints as soon as possible.',
+              'Complying with e-commerce regulations and consumer protection laws.',
             ],
-
           },
-
           {
-
-            title: 'قوانین سفارش‌دهی',
-
+            title: 'Ordering Policies',
             items: [
-
-              'سفارش پس از ثبت و تأیید پرداخت نهایی می‌شود و قابل لغو نیست مگر طبق سیاست مرجوعی.',
-
-              'موجودی محصولات محدود است و در صورت اتمام موجودی، سفارش لغو و مبلغ بازگردانده می‌شود.',
-
-              'انتخاب سایز و رنگ بر عهده مشتری است؛ لطفاً راهنمای سایز را مطالعه کنید.',
-
-              'فروشگاه حق دارد در صورت بروز خطای قیمت‌گذاری یا اطلاعات، سفارش را لغو کند.',
-
+              'An order is finalized after registration and payment confirmation and cannot be canceled except under the return policy.',
+              'Product inventory is limited; if stock runs out, the order will be canceled and the amount refunded.',
+              'Size and color selection is the customer\'s responsibility; please refer to the size guide.',
+              'The store reserves the right to cancel orders in case of pricing or information errors.',
             ],
-
           },
-
           {
-
-            title: 'قوانین پرداخت',
-
+            title: 'Payment Policies',
             content: [
-
-              'پرداخت از طریق کارت به کارت یا درگاه‌های معتبر بانکی انجام می‌شود. مبلغ سفارش باید حداکثر تا ۲۴ ساعت پس از ثبت سفارش واریز شود.',
-
+              'Payment is made via card-to-card transfer or authorized bank gateways. The order amount must be deposited within 24 hours of order placement.',
             ],
-
             items: [
-
-              'مسئولیت صحت اطلاعات پرداخت بر عهده مشتری است.',
-
-              'در صورت عدم واریز به موقع، سفارش به صورت خودکار لغو می‌شود.',
-
-              'رسید پرداخت باید خوانا و مطابق مبلغ سفارش باشد.',
-
-              'هزینه ارسال طبق شرایط اعلام‌شده در صفحه سبد خرید محاسبه می‌شود.',
-
+              'The accuracy of payment information is the customer\'s responsibility.',
+              'If payment is not made on time, the order will be automatically canceled.',
+              'The payment receipt must be legible and match the order amount.',
+              'Shipping costs are calculated according to the terms stated on the cart page.',
             ],
-
           },
-
           {
-
-            title: 'مالکیت معنوی',
-
+            title: 'Intellectual Property',
             content: [
-
-              'کلیه محتوای وب‌سایت شامل لوگو، تصاویر، طراحی‌ها، متون و نام تجاری آیریس تحت حمایت قوانین مالکیت فکری است.',
-
+              'All website content, including logo, images, designs, texts, and the IRIS brand name, is protected by intellectual property laws.',
             ],
-
             items: [
-
-              'کپی‌برداری، بازنشر یا استفاده تجاری بدون مجوز کتبی ممنوع است.',
-
-              'طراحی‌های اختصاصی آیریس متعلق به این برند است.',
-
-              'کاربران حق دانلود یا ذخیره محتوا برای استفاده غیرمجاز را ندارند.',
-
+              'Copying, republishing, or commercial use without written permission is prohibited.',
+              'IRIS\'s exclusive designs belong to the brand.',
+              'Users may not download or save content for unauthorized use.',
             ],
-
           },
-
         ],
-
       },
 
       privacy: {
-
-        meta: 'سیاست حریم خصوصی آیریس — نحوه جمع‌آوری، استفاده، نگهداری و حفاظت از اطلاعات شخصی کاربران.',
-
-        title: 'حریم خصوصی',
-
-        subtitle: 'حفاظت از اطلاعات شما برای ما اولویت دارد. در این صفحه نحوه برخورد با داده‌های شخصی توضیح داده شده است.',
-
+        meta: 'IRIS privacy policy — how we collect, use, store, and protect users\' personal information.',
+        title: 'Privacy Policy',
+        subtitle: 'Protecting your information is our priority. This page explains how we handle your personal data.',
         icon: 'lock',
-
         sections: [
-
           {
-
-            title: 'سیاست جمع‌آوری داده‌ها',
-
+            title: 'Data Collection Policy',
             content: [
-
-              'ما اطلاعاتی را که شما داوطلبانه در اختیار ما قرار می‌دهید جمع‌آوری می‌کنیم. این اطلاعات برای ارائه خدمات فروشگاه ضروری است.',
-
+              'We collect information that you voluntarily provide to us. This information is essential for providing store services.',
             ],
-
             items: [
-
-              'اطلاعات هویتی: نام، شماره موبایل، ایمیل.',
-
-              'اطلاعات سفارش: آدرس، کد پستی، استان و شهر.',
-
-              'اطلاعات پرداخت: شماره تراکنش و تصویر رسید (بدون ذخیره اطلاعات کارت بانکی).',
-
-              'اطلاعات فنی: آدرس IP، نوع مرورگر و دستگاه برای بهبود امنیت.',
-
+              'Identity information: name, mobile number, email.',
+              'Order information: address, postal code, province, city.',
+              'Payment information: transaction number and receipt image (bank card details are not stored).',
+              'Technical information: IP address, browser type, and device for security improvement.',
             ],
-
           },
-
           {
-
-            title: 'سیاست استفاده از داده‌ها',
-
+            title: 'Data Usage Policy',
             items: [
-
-              'پردازش و ارسال سفارشات ثبت‌شده.',
-
-              'ارتباط با مشتری درباره وضعیت سفارش و پشتیبانی.',
-
-              'بهبود تجربه کاربری و عملکرد وب‌سایت.',
-
-              'ارسال اطلاع‌رسانی‌های مرتبط (در صورت عضویت در خبرنامه).',
-
-              'جلوگیری از تقلب و سوءاستفاده از خدمات.',
-
+              'Processing and shipping registered orders.',
+              'Communicating with customers about order status and support.',
+              'Improving user experience and website performance.',
+              'Sending relevant notifications (if subscribed to the newsletter).',
+              'Preventing fraud and misuse of services.',
             ],
-
           },
-
           {
-
-            title: 'سیاست کوکی‌ها',
-
+            title: 'Cookie Policy',
             content: [
-
-              'وب‌سایت آیریس از کوکی‌ها و فناوری‌های مشابه برای بهبود عملکرد و حفظ وضعیت ورود شما استفاده می‌کند.',
-
+              'The IRIS website uses cookies and similar technologies to improve performance and maintain your login status.',
             ],
-
             items: [
-
-              'کوکی‌های ضروری: برای عملکرد صحیح سبد خرید و ورود به حساب.',
-
-              'کوکی‌های تحلیلی: برای درک رفتار کاربران و بهبود خدمات (ناشناس).',
-
-              'شما می‌توانید کوکی‌ها را از تنظیمات مرورگر غیرفعال کنید؛ ممکن است برخی امکانات محدود شوند.',
-
+              'Essential cookies: for proper cart and login functionality.',
+              'Analytical cookies: to understand user behavior and improve services (anonymous).',
+              'You can disable cookies in your browser settings; some features may be limited.',
             ],
-
           },
-
           {
-
-            title: 'سیاست امنیت اطلاعات',
-
+            title: 'Information Security Policy',
             content: [
-
-              'ما از روش‌های فنی و سازمانی مناسب برای محافظت از اطلاعات شما استفاده می‌کنیم.',
-
+              'We use appropriate technical and organizational measures to protect your information.',
             ],
-
             items: [
-
-              'رمزنگاری ارتباطات (HTTPS/SSL) در تمام صفحات.',
-
-              'محدودیت دسترسی کارکنان به اطلاعات شخصی.',
-
-              'نگهداری امن اطلاعات در سرورهای داخل کشور.',
-
-              'عدم فروش یا واگذاری اطلاعات شخصی به اشخاص ثالث بدون رضایت شما.',
-
-              'در صورت نقض امنیتی، اطلاع‌رسانی به کاربران طبق قوانین.',
-
+              'Encrypted communication (HTTPS/SSL) on all pages.',
+              'Limited employee access to personal information.',
+              'Secure storage of data on servers within Iran.',
+              'No sale or transfer of personal information to third parties without your consent.',
+              'In case of a security breach, users will be notified in accordance with regulations.',
             ],
-
           },
-
         ],
-
       },
 
       refund: {
-
-        meta: 'شرایط بازگشت وجه و لغو سفارش در فروشگاه آیریس — قوانین مرجوعی، تعویض و رسیدگی به کالای آسیب‌دیده.',
-
-        title: 'شرایط بازگشت وجه و لغو سفارش',
-
-        subtitle: 'ما رضایت شما را جدی می‌گیریم. در این صفحه شرایط مرجوعی، تعویض و بازپرداخت توضیح داده شده است.',
-
+        meta: 'Refund and order cancellation terms at IRIS store — return, exchange, and damaged goods policies.',
+        title: 'Refund and Order Cancellation Terms',
+        subtitle: 'We take your satisfaction seriously. This page explains returns, exchanges, and refund procedures.',
         icon: 'rotate-ccw',
-
         sections: [
-
           {
-
-            title: 'شرایط مرجوعی کالا',
-
+            title: 'Return Conditions',
             items: [
-
-              'حداکثر ۷ روز کاری از تاریخ تحویل برای درخواست مرجوعی.',
-
-              'محصول باید استفاده‌نشده، بدون لکه و با برچسب اصلی باشد.',
-
-              'بسته‌بندی اصلی سالم و کامل باشد.',
-
-              'لباس‌های زیرمجموعه بهداشتی و محصولات سفارشی قابل مرجوعی نیستند.',
-
-              'هزینه ارسال مرجوعی در صورت تغییر نظر مشتری بر عهده خریدار است.',
-
+              'Return requests accepted within 7 business days of delivery.',
+              'Product must be unused, unwashed, with no stains and original tags attached.',
+              'Original packaging must be intact and complete.',
+              'Hygienic undergarments and custom-made products are not returnable.',
+              'Return shipping costs are the buyer\'s responsibility in case of a change of mind.',
             ],
-
           },
-
           {
-
-            title: 'فرآیند بازگشت وجه',
-
+            title: 'Refund Process',
             content: [
-
-              'پس از دریافت و بررسی کالای مرجوعی، مبلغ ظرف ۳ تا ۷ روز کاری به حساب بانکی شما واریز می‌شود.',
-
+              'After receiving and inspecting the returned item, the amount will be transferred to your bank account within 3 to 7 business days.',
             ],
-
             items: [
-
-              'ثبت درخواست مرجوعی از طریق تماس با پشتیبانی یا فرم تماس.',
-
-              'دریافت کد مرجوعی و آدرس ارسال کالا.',
-
-              'ارسال محصول با بسته‌بندی مناسب.',
-
-              'بررسی کیفیت توسط تیم آیریس.',
-
-              'واریز مبلغ به شماره شبا یا کارت ثبت‌شده در سفارش.',
-
+              'Submit a return request by contacting support or via the contact form.',
+              'Receive a return code and the return shipping address.',
+              'Send the product with proper packaging.',
+              'Quality inspection by the IRIS team.',
+              'Transfer of funds to the IBAN or card number registered in the order.',
             ],
-
           },
-
           {
-
-            title: 'سیاست تعویض',
-
+            title: 'Exchange Policy',
             items: [
-
-              'امکان تعویض سایز یا رنگ تا ۷ روز پس از تحویل (در صورت موجودی).',
-
-              'تفاوت قیمت سایزها یا مدل‌های متفاوت توسط مشتری پرداخت می‌شود.',
-
-              'ارسال مجدد کالای جایگزین پس از دریافت محصول اولیه.',
-
-              'در صورت عدم موجودی، بازگشت وجه انجام می‌شود.',
-
+              'Exchange for a different size or color is possible within 7 days of delivery (subject to availability).',
+              'Any price differences between sizes or models are payable by the customer.',
+              'Replacement item is shipped after the original product is received.',
+              'If the requested item is unavailable, a refund will be issued.',
             ],
-
           },
-
           {
-
-            title: 'سیاست کالای آسیب‌دیده یا معیوب',
-
+            title: 'Damaged or Defective Goods Policy',
             content: [
-
-              'اگر محصول آسیب‌دیده یا معیوب دریافت کردید، ظرف ۴۸ ساعت به پشتیبانی اطلاع دهید.',
-
+              'If you receive a damaged or defective product, notify support within 48 hours.',
             ],
-
             items: [
-
-              'ارسال تصویر واضح از آسیب از طریق واتساپ یا ایمیل.',
-
-              'هزینه ارسال مجدد یا بازگشت وجه بر عهده فروشگاه است.',
-
-              'در صورت تأیید نقص تولیدی، تعویض رایگان یا بازگشت کامل وجه انجام می‌شود.',
-
-              'آسیب ناشی از استفاده نادرست مشمول این سیاست نیست.',
-
+              'Send a clear image of the damage via WhatsApp or email.',
+              'Reshipping or refund costs are borne by the store.',
+              'If a manufacturing defect is confirmed, a free exchange or full refund will be issued.',
+              'Damage caused by improper use is not covered by this policy.',
             ],
-
           },
-
         ],
-
       },
 
       faq: {
-
-        meta: 'پاسخ سوالات متداول درباره خرید، ارسال، پرداخت، سایزبندی و مرجوعی در فروشگاه آنلاین لباس آیریس.',
-
-        title: 'سوالات متداول',
-
-        subtitle: 'پاسخ رایج‌ترین سوالات درباره خرید، ارسال و پشتیبانی.',
-
+        meta: 'Answers to frequently asked questions about shopping, shipping, payment, sizing, and returns at IRIS online clothing store.',
+        title: 'Frequently Asked Questions',
+        subtitle: 'Answers to the most common questions about shopping, shipping, and support.',
         icon: 'help-circle',
-
         items: [
-
-          { question: 'چگونه می‌توانم سفارش ثبت کنم؟', answer: 'محصول مورد نظر را انتخاب کنید، سایز و تعداد را مشخص کرده و به سبد خرید اضافه کنید. سپس اطلاعات ارسال را وارد کرده و پرداخت را انجام دهید.' },
-
-          { question: 'روش‌های پرداخت چیست؟', answer: 'پرداخت از طریق کارت به کارت به شماره حساب اعلام‌شده در صفحه پرداخت انجام می‌شود. پس از واریز، تصویر رسید را بارگذاری کنید.' },
-
-          { question: 'هزینه ارسال چقدر است؟', answer: 'هزینه ارسال استاندارد ۵۰,۰۰۰ تومان است. برای سفارش‌های بالای ۱,۵۰۰,۰۰۰ تومان ارسال رایگان است.' },
-
-          { question: 'سفارش من چند روز طول می‌کشد تا برسد؟', answer: 'سفارش‌های تهران ۱ تا ۳ روز کاری و سایر شهرها ۳ تا ۷ روز کاری پس از تأیید پرداخت ارسال می‌شوند.' },
-
-          { question: 'آیا امکان پرداخت در محل وجود دارد؟', answer: 'در حال حاضر پرداخت در محل فعال نیست. تمام سفارش‌ها پیش از ارسال باید تسویه شوند.' },
-
-          { question: 'چگونه سایز مناسب را انتخاب کنم؟', answer: 'در صفحه هر محصول راهنمای سایز موجود است. در صورت تردید با پشتیبانی تماس بگیرید تا راهنمایی تخصصی دریافت کنید.' },
-
-          { question: 'آیا می‌توانم سفارش را لغو کنم؟', answer: 'تا قبل از ارسال محصول امکان لغو وجود دارد. پس از ارسال، تنها طبق شرایط مرجوعی می‌توانید درخواست بازگشت دهید.' },
-
-          { question: 'شرایط مرجوعی کالا چیست؟', answer: 'تا ۷ روز پس از تحویل، محصول استفاده‌نشده با برچسب اصلی قابل مرجوعی است. جزئیات در صفحه «بازگشت وجه» آمده است.' },
-
-          { question: 'اگر محصول معیوب دریافت کنم چه کنم؟', answer: 'ظرف ۴۸ ساعت تصویر آسیب را برای پشتیبانی ارسال کنید. تعویض رایگان یا بازگشت وجه انجام می‌شود.' },
-
-          { question: 'چگونه وضعیت سفارش را پیگیری کنم؟', answer: 'پس از ورود به حساب، در بخش «سفارشات» وضعیت لحظه‌ای سفارش قابل مشاهده است. همچنین پیامک اطلاع‌رسانی ارسال می‌شود.' },
-
-          { question: 'آیا کد تخفیف دارید؟', answer: 'بله. کدهای تخفیف فصلی و مناسبتی از طریق خبرنامه و شبکه‌های اجتماعی اعلام می‌شوند.' },
-
-          { question: 'آیا محصولات اورجینال هستند؟', answer: 'تمام محصولات آیریس تولید اختصاصی یا تأمین‌شده از منابع معتبر هستند و پیش از ارسال کنترل کیفیت می‌شوند.' },
-
-          { question: 'آیا ارسال به شهرستان دارید؟', answer: 'بله. ارسال به تمام استان‌های ایران از طریق پست پیشتاز و تیپاکس انجام می‌شود.' },
-
-          { question: 'ساعات پاسخگویی پشتیبانی چیست؟', answer: 'شنبه تا پنج‌شنبه از ساعت ۹ تا ۱۸. ایمیل‌ها حداکثر ظرف ۲۴ ساعت پاسخ داده می‌شوند.' },
-
-          { question: 'آیا امکان خرید عمده وجود دارد؟', answer: 'بله. برای همکاری عمده‌فروشی از طریق فرم تماس یا ایمیل با موضوع «همکاری» درخواست خود را ثبت کنید.' },
-
-          { question: 'چگونه حساب کاربری بسازم؟', answer: 'از صفحه ورود، گزینه «ساخت حساب» را انتخاب کنید. ثبت‌نام با شماره موبایل و رمز عبور انجام می‌شود.' },
-
+          { question: 'How do I place an order?', answer: 'Select your desired product, choose size and quantity, and add to cart. Then enter shipping information and complete payment.' },
+          { question: 'What are the payment methods?', answer: 'Payment is made via card-to-card transfer to the account number shown on the payment page. After transfer, upload the receipt image.' },
+          { question: 'How much is shipping?', answer: 'Standard shipping is 50,000 Toman. Orders over 1,500,000 Toman qualify for free shipping.' },
+          { question: 'How long does delivery take?', answer: 'Orders in Tehran take 1–3 business days, and other cities take 3–7 business days after payment confirmation.' },
+          { question: 'Is cash on delivery available?', answer: 'Cash on delivery is currently not available. All orders must be paid in full before shipping.' },
+          { question: 'How do I choose the right size?', answer: 'A size guide is available on each product page. If in doubt, contact support for expert guidance.' },
+          { question: 'Can I cancel my order?', answer: 'Cancellation is possible before the product is shipped. After shipping, you may only request a return under the return policy.' },
+          { question: 'What are the return conditions?', answer: 'Returns are accepted within 7 days of delivery for unused products with original tags. Details are in the "Refund Policy" page.' },
+          { question: 'What if I receive a defective product?', answer: 'Send a photo of the defect to support within 48 hours. A free exchange or refund will be arranged.' },
+          { question: 'How do I track my order?', answer: 'After logging in, go to "Orders" to see real-time status. SMS notifications are also sent.' },
+          { question: 'Do you offer discount codes?', answer: 'Yes. Seasonal and promotional discount codes are announced via our newsletter and social media.' },
+          { question: 'Are the products authentic?', answer: 'All IRIS products are exclusive productions or sourced from reputable suppliers, and undergo quality control before shipping.' },
+          { question: 'Do you ship to smaller cities?', answer: 'Yes. We ship to all provinces in Iran via Post and TIPAX.' },
+          { question: 'What are support hours?', answer: 'Sat–Thu, 9 AM – 6 PM. Emails are responded to within 24 hours.' },
+          { question: 'Is bulk purchasing available?', answer: 'Yes. For wholesale inquiries, submit your request via the contact form or email with the subject "Collaboration".' },
+          { question: 'How do I create an account?', answer: 'On the login page, select "Create Account". Registration is done via mobile number and password.' },
         ],
-
       },
-
     },
 
     newsletter: {
-
       title: '',
-
-      subtitle: 'برای دریافت اخبار کالکشن‌های جدید عضو شوید.',
-
-      button: 'عضویت',
-
-      placeholder: 'ایمیل شما...',
-
+      subtitle: 'Subscribe to receive updates on new collections.',
+      button: 'Subscribe',
+      placeholder: 'Your email...',
     },
 
     admin: {
-
-      title: 'پنل مدیریت',
-
-      panelLabel: 'پنل مدیریت',
-
-      logout: 'خروج',
-
-      lightMode: 'حالت روشن',
-
-      loading: 'در حال بارگذاری...',
+      title: 'Admin Panel',
+      panelLabel: 'Admin Panel',
+      logout: 'Logout',
+      lightMode: 'Light Mode',
+      loading: 'Loading...',
 
       nav: {
-
-        dashboard: 'داشبورد',
-
-        products: 'محصولات',
-
-        categories: 'دسته‌بندی‌ها',
-
-        orders: 'سفارش‌ها',
-
-        users: 'کاربران',
-
-        discounts: 'کدهای تخفیف',
-
-        settings: 'تنظیمات',
-
-        pages: 'محتوای صفحات',
-
+        dashboard: 'Dashboard',
+        products: 'Products',
+        categories: 'Categories',
+        orders: 'Orders',
+        users: 'Users',
+        discounts: 'Discount Codes',
+        settings: 'Settings',
+        pages: 'Page Content',
       },
 
       dashboard: {
-
-        title: 'داشبورد',
-
-        subtitle: 'خلاصه عملکرد فروشگاه',
-
-        refresh: 'بروزرسانی',
-
+        title: 'Dashboard',
+        subtitle: 'Store performance overview',
+        refresh: 'Refresh',
         stats: {
-
-          products: 'محصولات',
-
-          ordersToday: 'سفارش‌های امروز',
-
-          lowStock: 'موجودی کم',
-
-          pending: 'در انتظار بررسی',
-
-          totalOrders: 'کل سفارش‌ها',
-
-          totalRevenue: 'کل درآمد',
-
-          totalUsers: 'کاربران',
-
+          products: 'Products',
+          ordersToday: 'Today\'s Orders',
+          lowStock: 'Low Stock',
+          pending: 'Pending Review',
+          totalOrders: 'Total Orders',
+          totalRevenue: 'Total Revenue',
+          totalUsers: 'Users',
         },
-
-        weeklyRevenue: 'درآمد ۷ روز اخیر',
-
-        orderStatus: 'وضعیت سفارش‌ها',
-
-        financialSummary: 'خلاصه مالی',
-
-        noSales: 'هنوز فروشی ثبت نشده',
-
-        noData: 'داده‌ای موجود نیست',
-
-        ordersLabel: 'سفارش',
-
+        weeklyRevenue: 'Revenue (Last 7 Days)',
+        orderStatus: 'Order Status Distribution',
+        financialSummary: 'Financial Summary',
+        noSales: 'No sales recorded yet',
+        noData: 'No data available',
+        ordersLabel: 'Orders',
       },
 
       products: {
-
-        title: 'محصولات',
-
-        subtitle: 'مدیریت محصولات فروشگاه',
-
-        add: 'افزودن محصول',
-
-        searchPlaceholder: 'جستجوی محصول...',
-
-        allCategories: 'همه دسته‌بندی‌ها',
-
-        selectCategory: 'انتخاب دسته‌بندی',
-
-        sortNewest: 'جدیدترین',
-
-        sortPriceAsc: 'قیمت: کم به زیاد',
-
-        sortPriceDesc: 'قیمت: زیاد به کم',
-
-        search: 'جستجو',
-
-        empty: 'محصولی یافت نشد',
-
-        modalAdd: 'افزودن محصول',
-
-        modalEdit: 'ویرایش محصول',
-
-        save: 'ذخیره محصول',
-
-        update: 'بروزرسانی',
-
-        featured: 'محصول ویژه',
-
-        featuredBadge: 'ویژه',
-
-        normalBadge: 'عادی',
-
-        mainImage: 'اصلی',
-
-        addImage: 'افزودن تصویر',
-
-        slug: 'شناسه (slug)',
-
-        status: 'وضعیت',
-
-        statusDraft: 'پیش‌نویس',
-
-        statusActive: 'فعال',
-
-        statusArchived: 'آرشیو',
-
-        shortDesc: 'توضیح کوتاه',
-
-        fullDesc: 'توضیحات کامل',
-
-        category: 'دسته‌بندی',
-
-        productType: 'نوع محصول',
-
-        typeSimple: 'ساده',
-
-        typeVariable: 'چند واریانت',
-
-        price: 'قیمت',
-
-        stock: 'موجودی',
-
-        generateVariants: 'تولید واریانت‌ها',
-
-        variantsHint: 'محورهای واریانت را انتخاب و تولید کنید.',
-
-        variantTitle: 'عنوان',
-
-        emptyVariants: 'واریانتی وجود ندارد',
-
-        tabGeneral: 'عمومی',
-
-        tabVariants: 'واریانت‌ها',
-
-        tabMedia: 'تصاویر',
-
-        variantSetupIncomplete: 'این محصول چند واریانتی است اما سایز/رنگ تولید نشده. محورها را انتخاب کنید و «تولید واریانت‌ها» را بزنید، سپس موجودی هر واریانت را تنظیم کنید.',
-
-        variantSetupRequired: 'برای انتشار محصول چند واریانتی، ابتدا واریانت‌های سایز/رنگ را تولید کنید.',
-
+        title: 'Products',
+        subtitle: 'Manage store products',
+        add: 'Add Product',
+        searchPlaceholder: 'Search products...',
+        allCategories: 'All Categories',
+        selectCategory: 'Select Category',
+        sortNewest: 'Newest',
+        sortPriceAsc: 'Price: Low to High',
+        sortPriceDesc: 'Price: High to Low',
+        search: 'Search',
+        empty: 'No products found',
+        modalAdd: 'Add Product',
+        modalEdit: 'Edit Product',
+        save: 'Save Product',
+        update: 'Update',
+        featured: 'Featured Product',
+        featuredBadge: 'Featured',
+        normalBadge: 'Normal',
+        mainImage: 'Main',
+        addImage: 'Add Image',
+        slug: 'Slug',
+        status: 'Status',
+        statusDraft: 'Draft',
+        statusActive: 'Active',
+        statusArchived: 'Archived',
+        shortDesc: 'Short Description',
+        fullDesc: 'Full Description',
+        category: 'Category',
+        productType: 'Product Type',
+        typeSimple: 'Simple',
+        typeVariable: 'Variable',
+        price: 'Price',
+        stock: 'Stock',
+        generateVariants: 'Generate Variants',
+        variantsHint: 'Select variant axes and generate.',
+        variantTitle: 'Title',
+        emptyVariants: 'No variants',
+        tabGeneral: 'General',
+        tabVariants: 'Variants',
+        tabMedia: 'Images',
+        variantSetupIncomplete: 'This is a variable product but size/color variants have not been generated. Select axes and click "Generate Variants", then set stock for each variant.',
+        variantSetupRequired: 'To publish this variable product, first generate size/color variants.',
       },
 
       categories: {
-
-        title: 'دسته‌بندی‌ها',
-
-        subtitle: 'مدیریت دسته‌بندی محصولات',
-
-        add: 'افزودن دسته‌بندی',
-
-        empty: 'دسته‌بندی‌ای یافت نشد',
-
-        modalAdd: 'افزودن دسته‌بندی',
-
-        modalEdit: 'ویرایش دسته‌بندی',
-
-        save: 'ذخیره',
-
-        update: 'بروزرسانی',
-
-        selectImage: 'انتخاب تصویر',
-
+        title: 'Categories',
+        subtitle: 'Manage product categories',
+        add: 'Add Category',
+        empty: 'No categories found',
+        modalAdd: 'Add Category',
+        modalEdit: 'Edit Category',
+        save: 'Save',
+        update: 'Update',
+        selectImage: 'Select Image',
       },
 
       orders: {
-
-        title: 'سفارش‌ها',
-
-        subtitle: 'مدیریت سفارشات',
-
-        searchPlaceholder: 'جستجوی سفارش...',
-
-        allStatuses: 'همه وضعیت‌ها',
-
-        filter: 'فیلتر',
-
-        empty: 'سفارشی یافت نشد',
-
-        viewReceipt: 'مشاهده رسید',
-
-        approve: 'تایید',
-
-        reject: 'رد',
-
+        title: 'Orders',
+        subtitle: 'Manage orders',
+        searchPlaceholder: 'Search orders...',
+        allStatuses: 'All Statuses',
+        filter: 'Filter',
+        empty: 'No orders found',
+        viewReceipt: 'View Receipt',
+        approve: 'Approve',
+        reject: 'Reject',
       },
 
       users: {
-
-        title: 'کاربران',
-
-        subtitle: 'مدیریت کاربران',
-
-        empty: 'کاربری یافت نشد',
-
-        roleAdmin: 'ادمین',
-
-        roleUser: 'کاربر',
-
-        demote: 'حذف ادمین',
-
+        title: 'Users',
+        subtitle: 'Manage users',
+        empty: 'No users found',
+        roleAdmin: 'Admin',
+        roleUser: 'User',
+        demote: 'Remove Admin',
       },
 
       discounts: {
-
-        title: 'کدهای تخفیف',
-
-        subtitle: 'مدیریت کدهای تخفیف',
-
-        add: 'کد تخفیف جدید',
-
-        empty: 'کد تخفیفی ثبت نشده',
-
-        loading: 'در حال بارگذاری...',
-
-        modalTitle: 'کد تخفیف جدید',
-
-        create: 'ایجاد کد تخفیف',
-
-        active: 'فعال',
-
-        expired: 'منقضی',
-
-        inactive: 'غیرفعال',
-
-        deactivate: 'غیرفعال کردن',
-
-        delete: 'حذف',
-
-        noExpiry: 'بدون تاریخ انقضا',
-
-        percentOff: '٪ تخفیف',
-
-        fixedOff: 'تومان تخفیف',
-
+        title: 'Discount Codes',
+        subtitle: 'Manage discount codes',
+        add: 'New Discount Code',
+        empty: 'No discount codes found',
+        loading: 'Loading...',
+        modalTitle: 'New Discount Code',
+        create: 'Create Discount Code',
+        active: 'Active',
+        expired: 'Expired',
+        inactive: 'Inactive',
+        deactivate: 'Deactivate',
+        delete: 'Delete',
+        noExpiry: 'No expiry date',
+        percentOff: '% Off',
+        fixedOff: 'Toman Off',
       },
 
       settings: {
-
-        title: 'تنظیمات',
-
-        subtitle: 'تنظیمات فروشگاه',
-
+        title: 'Settings',
+        subtitle: 'Store Settings',
         tabs: {
-          identity: 'هویت فروشگاه',
-          payment: 'پرداخت',
-          contact: 'تماس و شبکه‌ها',
-          shipping: 'ارسال و سفارش',
-          sms: 'پیامک',
-          trust: 'نماد اعتماد',
-          seo: 'سئو',
+          identity: 'Store Identity',
+          payment: 'Payment',
+          contact: 'Contact & Social',
+          shipping: 'Shipping & Orders',
+          sms: 'SMS',
+          trust: 'Trust Badge',
+          seo: 'SEO',
         },
 
         identity: {
-          shopName: 'نام فروشگاه',
-          shopSlogan: 'شعار فروشگاه',
-          shopDescription: 'توضیحات فروشگاه',
-          logo: 'لوگو',
-          heroImage: 'تصویر هیرو (صفحه اصلی)',
-          heroSlider: 'تصاویر اسلایدر هیرو',
-          heroSliderHint: 'حداکثر ۳ تصویر. با کشیدن، ترتیب نمایش را تغییر دهید.',
-          heroSliderCount: 'تعداد تصاویر',
-          heroSliderAlt: 'متن جایگزین (alt)',
-          heroSliderAdd: 'افزودن تصویر',
-          heroSliderReplace: 'جایگزینی',
-          heroSliderRemove: 'حذف',
-          heroSliderEmpty: 'هنوز تصویری برای اسلایدر هیرو آپلود نشده است.',
-          heroSliderMaxReached: 'حداکثر ۳ تصویر مجاز است.',
-          poster: 'پوستر بخش ویژگی',
-          favicon: 'فاویکون',
-          upload: 'آپلود تصویر',
-          change: 'تغییر تصویر',
+          shopName: 'Store Name',
+          shopSlogan: 'Store Slogan',
+          shopDescription: 'Store Description',
+          logo: 'Logo',
+          heroImage: 'Hero Image (Homepage)',
+          heroSlider: 'Hero Slider Images',
+          heroSliderHint: 'Maximum 3 images. Drag to reorder.',
+          heroSliderCount: 'Image Count',
+          heroSliderAlt: 'Alt Text',
+          heroSliderAdd: 'Add Image',
+          heroSliderReplace: 'Replace',
+          heroSliderRemove: 'Remove',
+          heroSliderEmpty: 'No images have been uploaded for the hero slider yet.',
+          heroSliderMaxReached: 'Maximum 3 images allowed.',
+          poster: 'Feature Section Poster',
+          favicon: 'Favicon',
+          upload: 'Upload Image',
+          change: 'Change Image',
         },
 
         payment: {
-          method: 'روش پرداخت',
-          cardToCard: 'کارت به کارت',
-          zarinpal: 'زرین‌پال',
-          both: 'هر دو',
-          bankCard: 'شماره کارت',
-          bankOwner: 'نام صاحب کارت',
-          merchantId: 'شناسه پذیرنده زرین‌پال',
+          method: 'Payment Method',
+          cardToCard: 'Card to Card',
+          zarinpal: 'Zarinpal',
+          both: 'Both',
+          bankCard: 'Bank Card Number',
+          bankOwner: 'Cardholder Name',
+          merchantId: 'Zarinpal Merchant ID',
         },
 
         contact: {
-          phone: 'تلفن تماس',
-          email: 'ایمیل',
-          address: 'آدرس',
-          instagram: 'اینستاگرام',
-          telegram: 'تلگرام',
-          whatsapp: 'واتساپ',
+          phone: 'Phone Number',
+          email: 'Email',
+          address: 'Address',
+          instagram: 'Instagram',
+          telegram: 'Telegram',
+          whatsapp: 'WhatsApp',
         },
 
         trust: {
-          enamadHtml: 'کد HTML نماد اعتماد (اینماد)',
-          enamadHint: 'کد HTML دریافتی از پنل enamad.ir را اینجا paste کنید. پس از ذخیره، نماد اعتماد در فوتر سایت نمایش داده می‌شود.',
-          preview: 'پیش‌نمایش در فوتر',
-          invalidEmbed: 'کد HTML معتبر نیست. لطفاً کد دریافتی از enamad.ir را paste کنید.',
+          enamadHtml: 'Trust Badge HTML Code (Enamad)',
+          enamadHint: 'Paste the HTML code from your enamad.ir panel here. After saving, the trust badge will appear in the site footer.',
+          preview: 'Footer Preview',
+          invalidEmbed: 'Invalid HTML code. Please paste the code received from enamad.ir.',
         },
 
         shipping: {
-          standardCost: 'هزینه ارسال (تومان)',
-          freeFrom: 'ارسال رایگان از (تومان)',
-          minOrder: 'حداقل مبلغ سفارش (تومان)',
+          standardCost: 'Shipping Cost (Toman)',
+          freeFrom: 'Free Shipping From (Toman)',
+          minOrder: 'Minimum Order Amount (Toman)',
         },
 
         sms: {
-          enabled: 'فعال‌سازی پیامک',
-          provider: 'سرویس‌دهنده',
-          apiKey: 'کلید API',
+          enabled: 'Enable SMS',
+          provider: 'Provider',
+          apiKey: 'API Key',
         },
 
         seo: {
-          metaTitle: 'عنوان سئو',
-          metaDescription: 'توضیحات سئو',
+          metaTitle: 'SEO Title',
+          metaDescription: 'SEO Description',
         },
 
-        save: 'ذخیره تنظیمات',
-        saving: 'در حال ذخیره...',
-        saved: 'تنظیمات ذخیره شد',
-        loading: 'در حال بارگذاری...',
-        uploadSuccess: 'تصویر آپلود شد',
-
+        save: 'Save Settings',
+        saving: 'Saving...',
+        saved: 'Settings Saved',
+        loading: 'Loading...',
+        uploadSuccess: 'Image uploaded successfully',
       },
 
       pages: {
-
-        title: 'محتوای صفحات',
-
-        subtitle: 'ویرایش صفحات درباره ما، تماس، قوانین و...',
-
-        save: 'ذخیره محتوا',
-
-        saving: 'در حال ذخیره...',
-
-        saved: 'محتوا ذخیره شد',
-
-        preview: 'مشاهده در سایت',
-
-        lastUpdated: 'تاریخ آخرین بروزرسانی',
+        title: 'Page Content',
+        subtitle: 'Edit content for About Us, Contact, Terms, etc.',
+        save: 'Save Content',
+        saving: 'Saving...',
+        saved: 'Content Saved',
+        preview: 'View on Site',
+        lastUpdated: 'Last Updated',
 
         tabs: {
-
-          about: 'درباره ما',
-
-          contact: 'تماس با ما',
-
-          terms: 'قوانین و مقررات',
-
-          privacy: 'حریم خصوصی',
-
-          refund: 'بازگشت وجه',
-
-          faq: 'سوالات متداول',
-
+          about: 'About Us',
+          contact: 'Contact Us',
+          terms: 'Terms & Conditions',
+          privacy: 'Privacy Policy',
+          refund: 'Refund Policy',
+          faq: 'FAQ',
         },
 
         fields: {
-
-          title: 'عنوان صفحه',
-
-          subtitle: 'زیرعنوان',
-
-          meta: 'توضیحات سئو (meta)',
-
-          intro: 'متن معرفی',
-
-          mission: 'مأموریت',
-
-          vision: 'چشم‌انداز',
-
-          formSectionTitle: 'عنوان بخش فرم',
-
-          formUnavailable: 'متن جایگزین فرم',
-
-          mapPlaceholder: 'متن جایگزین نقشه',
-
-          label: 'برچسب',
-
-          value: 'مقدار',
-
-          note: 'توضیح کوتاه',
-
-          sectionTitle: 'عنوان بخش',
-
-          paragraphs: 'پاراگراف‌ها (هر خط یک پاراگراف)',
-
-          bullets: 'لیست (هر خط یک مورد)',
-
-          question: 'سوال',
-
-          answer: 'پاسخ',
-
-          icon: 'آیکون (lucide)',
-
-          desc: 'توضیح',
-
-          role: 'نقش',
-
-          name: 'نام',
-
+          title: 'Page Title',
+          subtitle: 'Subtitle',
+          meta: 'SEO Description',
+          intro: 'Introduction Text',
+          mission: 'Mission',
+          vision: 'Vision',
+          formSectionTitle: 'Form Section Title',
+          formUnavailable: 'Form Fallback Text',
+          mapPlaceholder: 'Map Fallback Text',
+          label: 'Label',
+          value: 'Value',
+          note: 'Short Note',
+          sectionTitle: 'Section Title',
+          paragraphs: 'Paragraphs (one per line)',
+          bullets: 'List Items (one per line)',
+          question: 'Question',
+          answer: 'Answer',
+          icon: 'Icon (lucide)',
+          desc: 'Description',
+          role: 'Role',
+          name: 'Name',
         },
 
-        addSection: 'افزودن بخش',
-
-        addFaq: 'افزودن سوال',
-
-        addWhy: 'افزودن مورد',
-
-        addStat: 'افزودن آمار',
-
-        addTeam: 'افزودن عضو تیم',
-
-        remove: 'حذف',
+        addSection: 'Add Section',
+        addFaq: 'Add Question',
+        addWhy: 'Add Item',
+        addStat: 'Add Statistic',
+        addTeam: 'Add Team Member',
+        remove: 'Remove',
 
         sectionTitles: {
-
-          intro: 'عنوان بخش معرفی',
-
-          mission: 'عنوان مأموریت',
-
-          vision: 'عنوان چشم‌انداز',
-
-          whyChooseUs: 'عنوان بخش مزایا',
-
-          stats: 'عنوان بخش آمار',
-
-          team: 'عنوان بخش تیم',
-
+          intro: 'Introduction Section Title',
+          mission: 'Mission Section Title',
+          vision: 'Vision Section Title',
+          whyChooseUs: 'Why Choose Us Section Title',
+          stats: 'Statistics Section Title',
+          team: 'Team Section Title',
         },
-
       },
 
       orderStatuses: {
-
-        pending:   { label: 'در انتظار',       cls: 'bg-yellow-100 text-yellow-800' },
-
-        paid:      { label: 'پرداخت شده',      cls: 'bg-blue-100 text-blue-800' },
-
-        shipped:   { label: 'ارسال شده',       cls: 'bg-purple-100 text-purple-800' },
-
-        delivered: { label: 'تحویل داده شده', cls: 'bg-green-100 text-green-800' },
-
-        cancelled: { label: 'لغو شده',         cls: 'bg-card text-muted' },
-
+        pending: { label: 'Pending', cls: 'bg-yellow-100 text-yellow-800' },
+        paid: { label: 'Paid', cls: 'bg-blue-100 text-blue-800' },
+        shipped: { label: 'Shipped', cls: 'bg-purple-100 text-purple-800' },
+        delivered: { label: 'Delivered', cls: 'bg-green-100 text-green-800' },
+        cancelled: { label: 'Cancelled', cls: 'bg-card text-muted' },
       },
 
       common: {
-
-        cancel: 'انصراف',
-
-        save: 'ذخیره',
-
-        search: 'جستجو',
-
-        filter: 'فیلتر',
-
-        edit: 'ویرایش',
-
-        delete: 'حذف',
-
-        nameRequired: 'نام الزامی است',
-
-        codeValueRequired: 'کد و مقدار الزامی‌اند',
-
+        cancel: 'Cancel',
+        save: 'Save',
+        search: 'Search',
+        filter: 'Filter',
+        edit: 'Edit',
+        delete: 'Delete',
+        nameRequired: 'Name is required',
+        codeValueRequired: 'Code and value are required',
       },
-
     },
-
   },
-
-
 
   api: {
-
     baseUrl: 'api/v1',
-
   },
-
 };
-
