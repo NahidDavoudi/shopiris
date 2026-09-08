@@ -477,3 +477,27 @@ div[data-page].active {
 .product-acc-panel {
   transition: max-height 0.3s ease;
 }
+
+/* ── Footer (formal) ── */
+.footer-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-body-text, #1d1d1f);
+  margin-bottom: 1.1rem;
+}
+
+.footer-link {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--color-body-text, #1d1d1f);
+}
+
+.footer-formal .enamad-badge img,
+.footer-formal .enamad-badge {
+  max-height: 52px;
+}
