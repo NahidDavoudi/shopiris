@@ -1,0 +1,237 @@
+<?php
+
+namespace App\Modules\Cart;
+
+use App\Modules\Discount\DiscountModel;
+use App\Modules\Product\ProductModel;
+use App\Modules\Variant\InventoryModel;
+use App\Modules\Variant\VariantService;
+
+class CartService
+{
+    public function __construct(
+        private CartModel     $cartModel,
+        private CartItemModel $itemModel,
+        private ProductModel  $productModel,
+        private DiscountModel $discountModel,
+        private VariantService $variantService,
+        private InventoryModel $inventoryModel,
+    ) {}
+
+    public function getCart(int $userId): array
+    {
+        $cart = $this->cartModel->getCartWithItems($userId);
+
+        if (!$cart) {
+            $this->cartModel->getOrCreateForUser($userId);
+            return $this->emptyCart();
+        }
+
+        return $cart;
+    }
+
+    public function addItem(int $userId, int $productId, int $qty = 1, ?int $variantId = null): array
+    {
+        if ($qty < 1) {
+            throw new \RuntimeException('تعداد باید حداقل ۱ باشد.', 422);
+        }
+
+        $product = $this->productModel->find($productId);
+        if (!$product || !$product['is_active']) {
+            throw new \RuntimeException('محصول یافت نشد.', 404);
+        }
+
+        $variantId = $this->resolveCartVariantId($productId, $variantId, $product);
+        $variant   = $this->variantService->getProductVariants($productId);
+        $variantRow = null;
+        foreach ($variant as $v) {
+            if ((int) $v['id'] === $variantId) {
+                $variantRow = $v;
+                break;
+            }
+        }
+        if (!$variantRow || !$variantRow['is_active']) {
+            throw new \RuntimeException('واریانت یافت نشد.', 404);
+        }
+
+        $available = $this->inventoryModel->getAvailable($variantId);
+        $cart      = $this->cartModel->getOrCreateForUser($userId);
+        $existing  = $this->itemModel->findExisting($cart['id'], $productId, $variantId);
+        $totalNeeded = ($existing ? $existing['quantity'] : 0) + $qty;
+
+        if ($available < $totalNeeded) {
+            throw new \RuntimeException(
+                "موجودی کافی نیست. فقط {$available} عدد در انبار موجود است.",
+                422
+            );
+        }
+
+        $this->itemModel->addOrIncrement($cart['id'], $productId, $variantId, $qty);
+
+        return $this->getCart($userId);
+    }
+
+    public function updateItem(int $userId, int $productId, int $qty, ?int $variantId = null): array
+    {
+        $product = $this->productModel->find($productId);
+        if (!$product || !$product['is_active']) {
+            throw new \RuntimeException('محصول یافت نشد.', 404);
+        }
+
+        if ($qty < 1) {
+            throw new \RuntimeException('تعداد باید حداقل ۱ باشد.', 422);
+        }
+
+        $variantId = $this->resolveCartVariantId($productId, $variantId, $product);
+        $available = $this->inventoryModel->getAvailable($variantId);
+
+        if ($qty > $available) {
+            throw new \RuntimeException(
+                "موجودی کافی نیست. فقط {$available} عدد در انبار موجود است.",
+                422
+            );
+        }
+
+        $cart = $this->cartModel->findByUserId($userId);
+        if (!$cart) {
+            throw new \RuntimeException('سبد خرید یافت نشد.', 404);
+        }
+
+        $this->itemModel->updateQuantityByVariant($cart['id'], $variantId, $qty);
+
+        return $this->getCart($userId);
+    }
+
+    public function removeItem(int $userId, int $productId, ?int $variantId = null): array
+    {
+        $cart = $this->cartModel->findByUserId($userId);
+        if (!$cart) {
+            throw new \RuntimeException('سبد خرید یافت نشد.', 404);
+        }
+
+        if ($variantId) {
+            $this->itemModel->removeByVariant($cart['id'], $variantId);
+        } else {
+            $this->itemModel->removeItem($cart['id'], $productId);
+        }
+
+        return $this->getCart($userId);
+    }
+
+    public function clearCart(int $userId): void
+    {
+        $cart = $this->cartModel->findByUserId($userId);
+        if ($cart) {
+            $this->cartModel->clearCart($cart['id']);
+        }
+    }
+
+    public function mergeGuestItems(int $userId, array $items): array
+    {
+        foreach ($items as $item) {
+            $productId = (int) ($item['product_id'] ?? 0);
+            $variantId = (int) ($item['variant_id'] ?? 0) ?: null;
+            $qty       = max(1, (int) ($item['qty'] ?? $item['quantity'] ?? 1));
+
+            if (!$productId) {
+                continue;
+            }
+
+            try {
+                $this->addItem($userId, $productId, $qty, $variantId);
+            } catch (\RuntimeException) {
+                continue;
+            }
+        }
+
+        return $this->getCart($userId);
+    }
+
+    public function applyDiscount(int $userId, string $code): array
+    {
+        $cart = $this->getCart($userId);
+
+        if (empty($cart['items'])) {
+            throw new \RuntimeException('سبد خرید خالی است.', 422);
+        }
+
+        $discount = $this->discountModel->findValidCode($code);
+        if (!$discount) {
+            throw new \RuntimeException('کد تخفیف معتبر نیست یا منقضی شده.', 422);
+        }
+
+        $discountAmount = $this->discountModel->calculateDiscount($discount, $cart['total']);
+
+        return [
+            'cart'            => $cart,
+            'discount_code'   => $discount,
+            'discount_amount' => $discountAmount,
+            'final_total'     => max(0, $cart['total'] - $discountAmount),
+        ];
+    }
+
+    public function validateForCheckout(int $userId): array
+    {
+        $cart = $this->getCart($userId);
+
+        if (empty($cart['items'])) {
+            throw new \RuntimeException('سبد خرید خالی است.', 422);
+        }
+
+        $errors = [];
+        foreach ($cart['items'] as $item) {
+            $productType = $item['product_type'] ?? 'simple';
+            $variantId   = (int) ($item['variant_id'] ?? 0) ?: null;
+
+            if (!$item['is_active']) {
+                $errors[] = "محصول «{$item['name']}» دیگر فعال نیست.";
+                continue;
+            }
+
+            if ($this->requiresExplicitVariant(['product_type' => $productType]) && !$variantId) {
+                $errors[] = "برای «{$item['name']}» انتخاب سایز/رنگ الزامی است.";
+                continue;
+            }
+
+            if ($variantId) {
+                if (empty($item['variant_is_active'])) {
+                    $errors[] = "واریانت انتخاب‌شده برای «{$item['name']}» دیگر فعال نیست.";
+                    continue;
+                }
+
+                $available = $this->inventoryModel->getAvailable($variantId);
+                if ($available < $item['quantity']) {
+                    $errors[] = "موجودی «{$item['name']}» کافی نیست (موجود: {$available}).";
+                    continue;
+                }
+            } elseif ($item['stock'] < $item['quantity']) {
+                $errors[] = "موجودی «{$item['name']}» کافی نیست (موجود: {$item['stock']}).";
+            }
+        }
+
+        if (!empty($errors)) {
+            throw new \RuntimeException(implode(' | ', $errors), 422);
+        }
+
+        return $cart;
+    }
+
+    private function emptyCart(): array
+    {
+        return ['items' => [], 'total' => 0];
+    }
+
+    private function requiresExplicitVariant(array $product): bool
+    {
+        return ($product['product_type'] ?? 'simple') === 'variable';
+    }
+
+    private function resolveCartVariantId(int $productId, ?int $variantId, array $product): int
+    {
+        if ($this->requiresExplicitVariant($product) && !$variantId) {
+            throw new \RuntimeException('انتخاب واریانت (سایز/رنگ) برای این محصول الزامی است.', 422);
+        }
+
+        return $this->variantService->resolveVariantId($productId, $variantId);
+    }
+}

@@ -1,0 +1,229 @@
+<?php
+
+namespace App\Modules\Product;
+
+use App\Core\Database\Model;
+
+class ProductModel extends Model
+{
+    protected string $table = 'products';
+    protected array $fillable = [
+        'name',
+        'slug',
+        'description',
+        'short_description',
+        'price',
+        'sale_price',
+        'category_id',
+        'stock',
+        'low_stock_threshold',
+        'featured',
+        'is_active',
+        'status',
+        'product_type',
+    ];
+    protected bool $timestamps = true;
+
+    // لیست ادمین — همه وضعیت‌ها (فعال، پیش‌نویس، آرشیو)
+    public function paginateAdmin(array $filters): array
+    {
+        $where  = ['1=1'];
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $where[]  = 'p.status = ?';
+            $params[] = $filters['status'];
+        }
+
+        return $this->paginateWithWhere($filters, $where, $params);
+    }
+
+    // لیست محصولات با فیلتر، مرتب‌سازی و صفحه‌بندی
+    public function paginateWithFilters(array $filters): array
+    {
+        $where  = ['p.is_active = 1'];
+        $params = [];
+
+        return $this->paginateWithWhere($filters, $where, $params);
+    }
+
+    private function paginateWithWhere(array $filters, array $where, array $params): array
+    {
+
+        if (!empty($filters['category_id'])) {
+            $where[]  = 'p.category_id = ?';
+            $params[] = (int) $filters['category_id'];
+        } elseif (!empty($filters['category'])) {
+            $where[]  = 'c.slug = ?';
+            $params[] = $filters['category'];
+        }
+        if (isset($filters['featured']) && $filters['featured'] !== null && $filters['featured'] !== '') {
+            $where[]  = 'p.featured = ?';
+            $params[] = (int) $filters['featured'];
+        }
+        if (!empty($filters['q'])) {
+            $where[]  = '(p.name LIKE ? OR p.description LIKE ? OR p.slug LIKE ?)';
+            $params[] = "%{$filters['q']}%";
+            $params[] = "%{$filters['q']}%";
+            $params[] = "%{$filters['q']}%";
+        }
+
+        $sortMap = [
+            'price_asc'  => 'p.price ASC',
+            'price_desc' => 'p.price DESC',
+            'newest'     => 'p.created_at DESC',
+            'popular'    => 'p.views DESC',
+        ];
+        $orderBy = $sortMap[$filters['sort'] ?? ''] ?? 'p.id DESC';
+
+        $limit  = min((int)($filters['limit'] ?? 12), 100);
+        $page   = max((int)($filters['page'] ?? 1), 1);
+        $offset = ($page - 1) * $limit;
+
+        $whereStr = implode(' AND ', $where);
+
+        $sql = "
+            SELECT p.*,
+                   (SELECT pi.image_url FROM product_images pi
+                    WHERE pi.product_id = p.id AND pi.is_main = 1
+                    LIMIT 1) AS main_image,
+                   c.name AS category_name,
+                   (SELECT COUNT(*) FROM product_variants pv WHERE pv.product_id = p.id) AS variant_count,
+                   (SELECT MIN(COALESCE(pv.price, p.price)) FROM product_variants pv WHERE pv.product_id = p.id) AS price_min,
+                   (SELECT MAX(COALESCE(pv.price, p.price)) FROM product_variants pv WHERE pv.product_id = p.id) AS price_max
+            FROM {$this->table} p
+            LEFT JOIN categories c ON c.id = p.category_id
+            WHERE {$whereStr}
+            ORDER BY {$orderBy}
+            LIMIT {$limit} OFFSET {$offset}
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $items = $stmt->fetchAll();
+
+        $countSql  = "SELECT COUNT(*) FROM {$this->table} p LEFT JOIN categories c ON c.id = p.category_id WHERE {$whereStr}";
+        $countStmt = $this->pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        return [
+            'data'       => $items,
+            'total'      => $total,
+            'page'       => $page,
+            'limit'      => $limit,
+            'last_page'  => (int) ceil($total / $limit),
+        ];
+    }
+
+    // محصول کامل با تصاویر و آپشن‌ها
+    public function getFullProduct(int $id): ?array
+    {
+        $product = $this->find($id);
+        if (!$product) return null;
+
+        $product['images']  = $this->getImages($id);
+        $product['options'] = $this->getOptions($id);
+
+        return $product;
+    }
+
+    public function getImages(int $productId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM product_images
+            WHERE product_id = ?
+            ORDER BY is_main DESC, sort_order ASC
+        ");
+        $stmt->execute([$productId]);
+        return $stmt->fetchAll();
+    }
+
+    public function getOptions(int $productId): array
+    {
+        return [];
+    }
+
+    public function getDescriptiveAttributes(int $productId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT at.slug AS type_slug, at.name AS type_name,
+                   av.value AS value_value, pa.custom_value
+            FROM product_attributes pa
+            JOIN attribute_types at ON at.id = pa.attribute_type_id
+            LEFT JOIN attribute_values av ON av.id = pa.attribute_value_id
+            WHERE pa.product_id = ?
+            ORDER BY at.sort_order ASC
+        ");
+        $stmt->execute([$productId]);
+        return $stmt->fetchAll();
+    }
+
+    public function getRelated(int $productId, int $limit = 4): array
+    {
+        $product = $this->find($productId);
+        if (!$product || !$product['category_id']) return [];
+
+        $stmt = $this->pdo->prepare("
+            SELECT p.*,
+                   (SELECT pi.image_url FROM product_images pi
+                    WHERE pi.product_id = p.id AND pi.is_main = 1
+                    LIMIT 1) AS main_image
+            FROM {$this->table} p
+            WHERE p.category_id = ?
+              AND p.id != ?
+              AND p.stock > 0
+              AND p.is_active = 1
+            ORDER BY p.featured DESC, p.views DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$product['category_id'], $productId, $limit]);
+        return $stmt->fetchAll();
+    }
+
+    public function getFeatured(int $limit = 8): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT p.*,
+                   (SELECT pi.image_url FROM product_images pi
+                    WHERE pi.product_id = p.id AND pi.is_main = 1
+                    LIMIT 1) AS main_image
+            FROM {$this->table} p
+            WHERE p.featured = 1 AND p.is_active = 1 AND p.stock > 0
+            ORDER BY p.created_at DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+
+    public function incrementViews(int $id): void
+    {
+        $this->pdo->prepare(
+            "UPDATE {$this->table} SET views = views + 1 WHERE id = ?"
+        )->execute([$id]);
+    }
+
+    public function decrementStock(int $id, int $qty = 1): bool
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE {$this->table}
+            SET stock = stock - ?
+            WHERE id = ? AND stock >= ?
+        ");
+        $stmt->execute([$qty, $id, $qty]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function incrementStock(int $id, int $qty = 1): void
+    {
+        $this->pdo->prepare("
+            UPDATE {$this->table} SET stock = stock + ? WHERE id = ?
+        ")->execute([$qty, $id]);
+    }
+
+    public function slugExists(string $slug, ?int $excludeId = null): bool
+    {
+        return $this->exists('slug', $slug, $excludeId);
+    }
+}

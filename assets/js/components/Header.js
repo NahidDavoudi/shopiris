@@ -1,0 +1,124 @@
+import { storeConfig } from '../config/bootstrap.js';
+import auth from '../core/auth.js';
+
+const Header = {
+  render() {
+    const user = auth.getCurrentUser();
+    const loggedIn = auth.isLoggedIn();
+    const navLinks = storeConfig.texts.nav;
+
+    const navItems = navLinks.map((l) => `
+      <a href="${l.href}" data-link
+         class="text-sm text-dim hover:text-body transition-colors px-2 py-1 rounded-full hover:bg-black/5 header-nav-link">
+        ${l.label}
+      </a>`).join('');
+
+    const userArea = loggedIn
+      ? `<div class="flex items-center gap-3">
+           <span class="text-xs text-muted hidden sm:inline">${user?.name || user?.phone || ''}</span>
+           <button id="header-logout-btn" class="text-xs text-muted hover:text-body transition-colors">logout</button>
+         </div>`
+      : `<a href="login.html" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="login">
+           <i data-lucide="user" class="w-[18px] h-[18px] text-muted"></i>
+         </a>`;
+
+    return `
+      <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/5">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
+          <a href="#/" data-link class="shrink-0">
+            <span class="font-display text-xl md:text-2xl text-body tracking-[0.15em] font-bold" dir="ltr">${storeConfig.name}</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
+          <div class="flex items-center gap-2">
+            <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="search">
+              <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
+            </button>
+            <a href="#/cart" data-link class="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group">
+              <i data-lucide="shopping-bag" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
+              <span id="cart-badge" class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+            </a>
+            ${userArea}
+            <button id="mobile-menu-btn" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
+              <i data-lucide="menu" class="w-[18px] h-[18px] text-muted"></i>
+            </button>
+          </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden px-4 py-3">
+          <nav class="flex flex-col gap-1">
+            ${navLinks.map((l) => `
+              <a href="${l.href}" data-link class="mobile-nav-item">${l.label}</a>`).join('')}
+            ${loggedIn ? `
+              <button id="mobile-logout-btn" class="mobile-auth-btn">
+                <span>logout</span>
+                <span class="nav-icon-box"><i data-lucide="log-out" class="w-4 h-4"></i></span>
+              </button>` : `
+              <a href="login.html" class="mobile-auth-btn">
+                <span>login</span>
+                <span class="nav-icon-box"><i data-lucide="user" class="w-4 h-4"></i></span>
+              </a>`}
+          </nav>
+        </div>
+      </header>
+      <div id="mobile-menu-backdrop"></div>`;
+  },
+
+  bind(container, callbacks = {}) {
+    const menuBtn = container.querySelector('#mobile-menu-btn');
+    const menu = container.querySelector('#mobile-menu');
+    const backdrop = container.querySelector('#mobile-menu-backdrop');
+
+    function setMenuOpen(open) {
+      menu?.classList.toggle('open', open);
+      backdrop?.classList.toggle('open', open);
+      menuBtn?.classList.toggle('menu-open', open);
+      document.body.classList.toggle('overflow-hidden', open);
+
+      const icon = menuBtn?.querySelector('[data-lucide]');
+      if (icon) {
+        icon.setAttribute('data-lucide', open ? 'x' : 'menu');
+        window.lucide?.createIcons();
+      }
+    }
+
+    function highlightNav() {
+      const hash = location.hash.split('?')[0];
+      container.querySelectorAll('.header-nav-link, #mobile-menu a[data-link]').forEach((a) => {
+        const href = a.getAttribute('href');
+        const active = href === hash || (hash === '#/' && href === '#/');
+        a.classList.toggle('text-body', active);
+        a.classList.toggle('font-bold', active);
+        if (a.classList.contains('mobile-nav-item')) {
+          a.classList.toggle('text-accent', active);
+        }
+      });
+    }
+
+    highlightNav();
+    window.addEventListener('hashchange', highlightNav);
+
+    container.querySelector('#header-logout-btn')?.addEventListener('click', async () => {
+      await callbacks.onLogout?.();
+    });
+
+    container.querySelector('#mobile-logout-btn')?.addEventListener('click', async () => {
+      setMenuOpen(false);
+      await callbacks.onLogout?.();
+    });
+
+    menuBtn?.addEventListener('click', () => {
+      setMenuOpen(!menu?.classList.contains('open'));
+    });
+
+    backdrop?.addEventListener('click', () => setMenuOpen(false));
+
+    container.querySelectorAll('#mobile-menu a[data-link]').forEach((a) => {
+      a.addEventListener('click', () => setMenuOpen(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu?.classList.contains('open')) setMenuOpen(false);
+    });
+  },
+};
+
+export default Header;

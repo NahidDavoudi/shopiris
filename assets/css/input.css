@@ -1,0 +1,325 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark:        #ffffff;
+  --color-dark-2:      #f5f5f7;
+  --color-dark-3:      #f0f0f2;
+  --color-border:      #d2d2d7;
+  --color-accent:      #000000;
+  --color-accent-hover:#333333;
+  --color-muted:       #86868b;
+  --color-text-dim:    rgba(0, 0, 0, 0.55);
+  --color-body-text:   #1d1d1f;
+  --font-vazir:   'Vazirmatn', sans-serif;
+  --font-display: 'Agbalumo', sans-serif;
+  --font-felipa:  'Felipa', sans-serif;
+}
+
+/* Semantic theme utilities (overridable via core/theme.js) */
+.bg-body         { background-color: var(--color-dark); }
+.bg-surface      { background-color: var(--color-dark-2); }
+.bg-card         { background-color: var(--color-dark-3); }
+.bg-accent       { background-color: var(--color-accent); }
+.text-body       { color: var(--color-body-text, #1d1d1f); }
+.text-muted      { color: var(--color-muted); }
+.text-dim        { color: var(--color-text-dim); }
+.text-accent     { color: var(--color-accent); }
+.border-border   { border-color: var(--color-border); }
+.hover\:bg-accent-hover:hover { background-color: var(--color-accent-hover); }
+.hover\:text-accent:hover     { color: var(--color-accent); }
+.hover\:bg-row:hover          { background-color: var(--color-dark-2); }
+.focus\:border-accent:focus   { border-color: var(--color-accent); outline: none; }
+.admin-nav-active {
+  background-color: color-mix(in oklab, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.admin-input {
+  background-color: var(--color-dark-3);
+  border: 1px solid var(--color-border);
+  color: var(--color-body-text, #1d1d1f);
+}
+.admin-input::placeholder { color: var(--color-muted); }
+.admin-input:focus { border-color: var(--color-accent); outline: none; }
+.admin-card {
+  background-color: var(--color-dark);
+  border: 1px solid var(--color-border);
+}
+.admin-table-head { background-color: var(--color-accent); color: #fff; }
+
+div[data-page] { display: none; }
+div[data-page].active { display: block; }
+
+/* ── Aluminum Button (Apple-like brushed metal) ── */
+.btn-aluminum {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #1d1d1f;
+  background: linear-gradient(
+    180deg,
+    #fafafa 0%,
+    #e8e8ed 35%,
+    #d1d1d6 65%,
+    #e3e3e8 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+}
+.btn-aluminum::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.45) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.btn-aluminum:hover {
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.btn-aluminum:active {
+  transform: scale(0.97);
+  filter: brightness(0.97);
+}
+
+/* ── Liquid Glass Button ── */
+.btn-glass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: #1d1d1f;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 6px 24px rgba(0, 0, 0, 0.08);
+}
+.btn-glass:active {
+  transform: scale(0.95);
+}
+.btn-glass.is-success {
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Button Sizes ── */
+.btn-sm  { padding: 0.4rem 1rem;  font-size: 0.75rem;  border-radius: 9999px; }
+.btn-md  { padding: 0.625rem 1.5rem; font-size: 0.875rem; border-radius: 9999px; }
+.btn-lg  { padding: 0.875rem 2rem;  font-size: 1rem;    border-radius: 9999px; }
+.btn-icon { width: 2.25rem; height: 2.25rem; padding: 0; font-size: 1.125rem; border-radius: 9999px; }
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn .btn-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Product Card Soft Style ── */
+.iris-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 28px;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1), box-shadow 0.4s ease;
+}
+.iris-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Carousel Nav Buttons ── */
+.swiper-nav-btn {
+  width: var(--nav-size, 2.5rem);
+  height: var(--nav-size, 2.5rem);
+  min-width: var(--nav-size, 2.5rem);
+  min-height: var(--nav-size, 2.5rem);
+  padding: 0;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.swiper-nav-btn:hover:not(:disabled) { transform: scale(1.05); }
+
+/* Swiper adds .swiper-button-prev/next with position:absolute — reset inside nav row */
+.carousel-nav-row .swiper-button-prev,
+.carousel-nav-row .swiper-button-next,
+.carousel-nav-row .swiper-nav-btn {
+  position: static !important;
+  inset: auto !important;
+  margin: 0 !important;
+  transform: none;
+}
+.carousel-nav-row .swiper-button-prev::after,
+.carousel-nav-row .swiper-button-next::after {
+  display: none !important;
+}
+.carousel-nav-row .swiper-button-prev:hover,
+.carousel-nav-row .swiper-button-next:hover {
+  transform: scale(1.05);
+}
+
+/* ── Featured Carousel (Flow Marquee) ── */
+.featured-carousel-section {
+  overflow-x: clip;
+}
+.flow-marquee__viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: var(--marquee-height, 420px);
+}
+@media (min-width: 768px) {
+  .flow-marquee__viewport {
+    height: var(--marquee-height-md, var(--marquee-height, 480px));
+  }
+}
+.flow-marquee__card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--marquee-radius, 12px);
+  will-change: transform;
+}
+.featured-poster--marquee {
+  box-shadow: none;
+}
+.featured-poster--marquee:hover {
+  box-shadow: none;
+}
+
+/* ── Hero ── */
+.hero-fullbleed img {
+  object-position: center top;
+}
+
+.hero-slider {
+  --hero-fade-duration: 1000ms;
+  --hero-display-duration: 5000ms;
+  --hero-ken-burns-duration: 5000ms;
+  --hero-ken-burns-start: 1.08;
+  --hero-ken-burns-end: 1;
+  overflow: hidden;
+}
+
+.hero-slider__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--hero-fade-duration) ease-in-out;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.hero-slider__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hero-slider__slide.is-leaving {
+  opacity: 0;
+  z-index: 1;
+}
+
+.hero-slider__slide.is-entering {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hero-slider__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transform: scale(var(--hero-ken-burns-start));
+  will-change: transform;
+}
+
+.hero-slider--active .hero-slider__slide.is-active .hero-slider__image {
+  animation: hero-ken-burns var(--hero-ken-burns-duration) ease-out forwards;
+}
+
+@keyframes hero-ken-burns {
+  from {
+    transform: scale(var(--hero-ken-burns-start));
+  }
+  to {
+    transform: scale(var(--hero-ken-burns-end));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider__slide {
+    transition: none;
+  }
+
+  .hero-slider--active .hero-slider__slide.is-active .hero-slider__image {
+    animation: none;
+    transform: scale(1);
+  }
+}
+
+/* ── Product Detail ── */
+.product-size-unavailable::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: linear-gradient(
+    to top left,
+    transparent calc(50% - 0.5px),
+    rgba(0, 0, 0, 0.25) calc(50% - 0.5px),
+    rgba(0, 0, 0, 0.25) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+  pointer-events: none;
+}
+.product-acc-panel {
+  transition: max-height 0.3s ease;
+}

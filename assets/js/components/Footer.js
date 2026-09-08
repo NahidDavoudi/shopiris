@@ -1,0 +1,71 @@
+import { storeConfig } from '../config/bootstrap.js';
+import { getEnamadBadgeHtml } from '../utils/enamadHelpers.js';
+
+function renderEnamadBadge() {
+  const html = getEnamadBadgeHtml(storeConfig.enamad?.html);
+  if (!html) return '';
+  return `<div class="enamad-badge">${html}</div>`;
+}
+
+const Footer = {
+  render() {
+    const { footer } = storeConfig.texts;
+    const navLinks = storeConfig.texts.nav;
+    const legalLinks = storeConfig.texts.legal?.footerLinks || [];
+    const enamadBadge = renderEnamadBadge();
+
+    return `
+      <footer class="border-t border-border bg-body mt-20">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-12">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+            <div class="text-right flex flex-col items-start">
+              <div class="flex items-center gap-2 justify-end mb-4">
+                <span class="font-display text-lg text-body">${storeConfig.name}</span>
+                <img src="${storeConfig.logo}" alt="" class="w-8 h-8 object-contain">
+              </div>
+              <p class="text-sm text-muted leading-relaxed">${footer.tagline}</p>
+            </div>
+            <div class="text-right">
+              <h3 class="text-sm font-bold text-body mb-4">quick access</h3>
+              <ul class="space-y-2">
+                ${navLinks.map((l) => `
+                  <li><a href="${l.href}" data-link class="text-sm text-muted hover:text-body transition-colors">${l.label}</a></li>`).join('')}
+              </ul>
+            </div>
+            <div class="text-right">
+              <h3 class="text-sm font-bold text-body mb-4">privacy policy</h3>
+              <ul class="space-y-2">
+                ${legalLinks.map((l) => `
+                  <li><a href="${l.href}" data-link class="text-sm text-muted hover:text-body transition-colors">${l.label}</a></li>`).join('')}
+              </ul>
+            </div>
+            <div class="text-right">
+              <h3 class="text-sm font-bold text-body mb-4">contact usا</h3>
+              <p class="text-sm text-muted mb-2">${footer.support}</p>
+              ${storeConfig.texts.legal?.contact?.phone?.value
+                ? `<p class="text-sm text-body mb-1" dir="ltr">${storeConfig.texts.legal.contact.phone.value}</p>`
+                : ''}
+              ${storeConfig.texts.legal?.contact?.email?.value
+                ? `<p class="text-sm text-body mb-2" dir="ltr">${storeConfig.texts.legal.contact.email.value}</p>`
+                : ''}
+              <p class="text-sm text-body" dir="ltr">${footer.social}</p>
+            </div>
+          </div>
+          <div class="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted/60">
+            <p class="text-center sm:text-right">${footer.copyright}</p>
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              ${enamadBadge}
+              <div class="flex flex-wrap gap-4 justify-center">
+                ${legalLinks.slice(2, 4).map((l) => `
+                  <a href="${l.href}" data-link class="hover:text-body transition-colors">${l.label}</a>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>`;
+  },
+
+  bind() { /* no events */ },
+};
+
+export default Footer;
