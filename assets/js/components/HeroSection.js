@@ -55,24 +55,24 @@ const HeroSection = {
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none z-[1]"></div>
         </div>
-        <div class="absolute bottom-8 md:bottom-12 left-0 right-0 z-10 px-4 md:px-6">
-          <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row items-stretch md:items-end justify-between gap-6">
-            <div class="text-right min-w-0">
-              <h1 class="font-display text-3xl sm:text-4xl md:text-6xl text-white mb-2 leading-none drop-shadow-lg" dir="ltr">${hero.title}</h1>
-              ${hero.subtitle ? `<p class="text-white/75 text-sm md:text-base max-w-sm">${hero.subtitle}</p>` : ''}
+        <div class="absolute bottom-4 md:bottom-12 left-0 right-0 z-10 px-4 md:px-6">
+          <div class="max-w-[1280px] mx-auto flex items-end justify-between gap-4">
+            <div class="max-w-sm text-right" dir="ltr">
+              <h1 class="font-display font-bolder text-3xl sm:text-4xl md:text-6xl text-white mb-2 leading-none drop-shadow-lg">${hero.title}</h1>
+              ${hero.subtitle ? `<p class="text-white/75 text-sm md:text-base">${hero.subtitle}</p>` : ''}
             </div>
-            <div class="absolute bottom-16 right-12 flex flex-col gap-3 items-end z-50">
+            <div class="hero-cta-stack flex flex-col items-end gap-1 shrink-0">
               ${Button.render({
           variant: 'text',
           label: hero.ctaPrimary, // Explore Collection
           href: '#/shop',
-          className: 'text-xl tracking-wider' // فونت درشت و فاصله حروف
+          className: 'hero-cta-link'
         })}
               ${Button.render({
           variant: 'text',
           label: hero.ctaSecondary, // Categories
           href: '#/categories',
-          className: 'text-xl tracking-wider'
+          className: 'hero-cta-link'
         })}
             </div>
           </div>

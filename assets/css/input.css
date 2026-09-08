@@ -13,7 +13,11 @@
   --font-display: 'Montserrat', 'Vazirmatn', sans-serif;
   --font-vazir: 'Montserrat', 'Vazirmatn', sans-serif;
   --font-felipa: 'Felipa', sans-serif;
-  --font-fancy: 'AlexBrush';
+  --font-fancy: 'MeaCulpa';
+}
+
+.root {
+  font-family: var(--font-display);
 }
 
 /* Semantic theme utilities (overridable via core/theme.js) */
@@ -222,6 +226,35 @@ div[data-page].active {
 
 .btn-text:active {
   transform: scale(0.98);
+}
+
+/* ── Hero CTA Links (ستونی، بدون فریم) ── */
+.hero-cta-stack {
+  gap: 0.25rem;
+}
+
+.hero-cta-link {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  .hero-cta-link {
+    font-size: 1.25rem;
+  }
+}
+
+.hero-cta-link .btn-inner {
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.hero-cta-link:hover .btn-inner {
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 /* ── Button Sizes ── */

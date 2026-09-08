@@ -57,7 +57,7 @@ export default {
 
   fonts: {
     body: 'Vazirmatn',
-    display: 'Agbalumo',
+    display: 'Montserrat',
     felipa: 'Felipa',
   },
 

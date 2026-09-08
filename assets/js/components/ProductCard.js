@@ -46,11 +46,11 @@ const ProductCard = {
 
     const image = img
       ? renderImageWithFallback({
-          src: img,
-          alt: p.name,
-          imgClass: 'w-full h-full object-contain transition-opacity duration-500 group-hover:opacity-90',
-          iconSize: 'w-8 h-8',
-        })
+        src: img,
+        alt: p.name,
+        imgClass: 'w-full h-full object-contain transition-opacity duration-500 group-hover:opacity-90',
+        iconSize: 'w-8 h-8',
+      })
       : renderImagePlaceholder('w-8 h-8');
 
     const quickBuyControl = outOfStock
@@ -71,7 +71,7 @@ const ProductCard = {
           <a href="${href}" data-link class="transition-opacity hover:opacity-70">${name}</a>
         </h3>
         ${subtitle ? `<p class="mt-1 text-[13px] font-light uppercase tracking-[0.15em] text-muted leading-relaxed">${subtitle}</p>` : ''}
-        <p class="mt-4 text-[13px] tracking-wide text-body" dir="ltr">${price}</p>
+        <p class="mt-4 text-[13px] font-bold tracking-wide text-body" dir="ltr">${price}</p>
         <div class="mt-5 flex items-center justify-between gap-3">
           ${quickBuyControl}
           <button type="button" class="card-wishlist-btn text-[11px] font-bold uppercase tracking-[0.15em] text-body transition-opacity hover:opacity-60"
