@@ -48,8 +48,8 @@ const HeroSection = {
                aria-label="${isSlider ? 'اسلایدر تصاویر هیرو' : (images[0]?.alt || storeConfig.name)}"
                aria-live="${isSlider ? 'off' : undefined}">
             ${images.length
-              ? this._renderSlides(images)
-              : `<div class="hero-slider__slide is-active" data-hero-slide aria-hidden="false">
+        ? this._renderSlides(images)
+        : `<div class="hero-slider__slide is-active" data-hero-slide aria-hidden="false">
                    <div class="w-full h-full bg-surface"></div>
                  </div>`}
           </div>
@@ -61,9 +61,19 @@ const HeroSection = {
               <h1 class="font-display text-3xl sm:text-4xl md:text-6xl text-white mb-2 leading-none drop-shadow-lg" dir="ltr">${hero.title}</h1>
               ${hero.subtitle ? `<p class="text-white/75 text-sm md:text-base max-w-sm">${hero.subtitle}</p>` : ''}
             </div>
-            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              ${Button.render({ variant: 'aluminum', label: hero.ctaPrimary, href: '#/shop', size: 'lg', className: 'w-full sm:w-auto justify-center' })}
-              ${Button.render({ variant: 'glass', label: hero.ctaSecondary, href: '#/categories', size: 'lg', className: 'w-full sm:w-auto justify-center text-white !border-white/30' })}
+            <div class="absolute bottom-16 right-12 flex flex-col gap-3 items-end z-50">
+              ${Button.render({
+          variant: 'text',
+          label: hero.ctaPrimary, // Explore Collection
+          href: '#/shop',
+          className: 'text-xl tracking-wider' // فونت درشت و فاصله حروف
+        })}
+              ${Button.render({
+          variant: 'text',
+          label: hero.ctaSecondary, // Categories
+          href: '#/categories',
+          className: 'text-xl tracking-wider'
+        })}
             </div>
           </div>
         </div>

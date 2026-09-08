@@ -7,6 +7,13 @@ const SIZES = {
   icon: 'btn-icon',
 };
 
+// نگاشت متمرکز Variantها برای جلوگیری از if/else و کثیف شدن کد
+const VARIANTS = {
+  aluminum: storeConfig.ui?.btnAluminum || 'btn-aluminum',
+  glass: storeConfig.ui?.btnGlass || 'btn-glass',
+  text: 'btn-text',
+};
+
 const Button = {
   render({
     variant = 'aluminum',
@@ -19,10 +26,11 @@ const Button = {
     disabled = false,
     attrs = {},
   } = {}) {
-    const ui = storeConfig.ui;
-    const variantClass = variant === 'glass' ? ui.btnGlass : ui.btnAluminum;
+    // خواندن استایل مستقیماً از آبجکت
+    const variantClass = VARIANTS[variant] || VARIANTS.aluminum;
     const sizeClass = SIZES[size] || SIZES.md;
     const disabledAttr = disabled ? 'disabled aria-disabled="true"' : '';
+
     const extraAttrs = Object.entries(attrs)
       .map(([k, v]) => `${k}="${v}"`)
       .join(' ');

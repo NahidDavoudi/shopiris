@@ -28,9 +28,9 @@ const ProductCard = {
       : '';
 
     const addBtn = Button.render({
-      variant: 'glass',
-      size: 'icon',
-      label: '+',
+      variant: 'text',
+      size: 'sm',
+      label: 'wishlist +',
       className: 'add-to-cart-quick shrink-0',
       attrs: {
         'data-product-id': p.id,
@@ -47,10 +47,10 @@ const ProductCard = {
         <div class="relative aspect-square overflow-hidden bg-[#f5f5f7]">
           ${lowStock}${outOfStock}
           ${renderImageWithFallback({
-            src: img,
-            alt: p.name,
-            imgClass: 'w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out',
-          })}
+      src: img,
+      alt: p.name,
+      imgClass: 'w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out',
+    })}
         </div>
         <div class="p-4 md:p-5 text-right">
           <p class="text-[10px] text-muted mb-1.5 tracking-wide uppercase">${categoryName}</p>

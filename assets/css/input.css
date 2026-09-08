@@ -197,49 +197,30 @@ div[data-page].active {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-
-/* کانتینر برای قرار دادن لینک‌ها روی هم و در گوشه صفحه */
-.action-links-container {
-  position: absolute;
-  bottom: 40px;
-  /* فاصله از پایین */
-  right: 40px;
-  /* بردن به یک سمت (مثلاً راست) تا وسط نباشه */
-  display: flex;
-  flex-direction: column;
-  /* چیدمان ستونی و روی هم */
-  gap: 16px;
-  /* فاصله بین دو متن */
-  align-items: flex-end;
-  /* تراز کردن متن‌ها از سمت راست */
-  z-index: 10;
-}
-
-/* استایل لینک‌های متنی بدون هیچ فریم و گرادیانت اضافی */
-.simple-text-link {
-  font-family: inherit;
-  /* ارث‌بری فونتی که مشتری داده */
-  font-size: 16px;
-  font-weight: 500;
-  color: #1d1d1f;
-  /* یا سفید (بستگی به رنگ پس‌زمینه نهایی داره) */
-  text-decoration: none;
+/* ── Minimal Text Button ── */
+.btn-text {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #ffffff;
+  /* یا هر رنگی که تو عکس مشتری مشخصه */
   background: transparent;
-  /* حذف بک‌گراند */
   border: none;
-  /* حذف فریم */
   box-shadow: none;
-  /* حذف کامل سایه‌ها برای یک طراحی تخت */
+  /* حذف کامل سایه‌های استایل‌های قبلی */
   padding: 0;
   cursor: pointer;
+  text-decoration: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* یک افکت هاور ساده برای اینکه کاربر بفهمه این متن‌ها لینک هستن */
-.simple-text-link:hover {
+.btn-text:hover {
   opacity: 0.6;
-  transform: translateX(-4px);
-  /* یه حرکت خیلی ریز به چپ موقع هاور */
+}
+
+.btn-text:active {
+  transform: scale(0.98);
 }
 
 /* ── Button Sizes ── */
@@ -444,17 +425,19 @@ div[data-page].active {
   }
 }
 
-/* ── Product Detail ── */
-.product-size-unavailable::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  background: linear-gradient(to top left,
-      transparent calc(50% - 0.5px),
-      rgba(0, 0, 0, 0.25) calc(50% - 0.5px),
-      rgba(0, 0, 0, 0.25) calc(50% + 0.5px),
-      transparent calc(50% + 0.5px));
-  pointer-events: none;
+/* ── Product Detail (minimal) ── */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-dot-active {
+  outline: 1px solid rgba(0, 0, 0, 0.6);
+  outline-offset: 2px;
 }
 
 .product-acc-panel {

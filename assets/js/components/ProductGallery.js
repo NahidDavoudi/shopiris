@@ -1,67 +1,69 @@
-import { storeConfig } from '../config/bootstrap.js';
 import { renderImageWithFallback, renderImagePlaceholder } from '../utils/imagePlaceholder.js';
-// import { pickImageUrl } from '../utils/imageUrl.js';
 
 const ProductGallery = {
-  render({ images = [], name = '', refCode = '' }) {
-    const t = storeConfig.texts.product;
+  render({ images = [], name = '' }) {
     const validImages = images.filter((img) => img?.url);
 
-    const thumbs = validImages.length
-      ? validImages.map((img, i) => `
-          <button type="button" data-thumb-index="${i}"
-                  class="product-thumb relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 shrink-0 transition-colors bg-surface
-                         ${i === 0 ? 'border-body' : 'border-transparent hover:border-black/20'}">
+    const slides = validImages.length
+      ? validImages.map((img) => `
+          <div class="gallery-slide relative min-w-full snap-center aspect-[4/5] flex items-center justify-center overflow-hidden">
             ${renderImageWithFallback({
-        src: pickImageUrl(img, 'thumb'),
-        alt: '',
-        imgClass: 'w-full h-full object-cover',
-        iconSize: 'w-5 h-5',
+        src: img.url,
+        alt: name,
+        imgClass: 'w-full h-full object-contain',
+        iconSize: 'w-12 h-12',
       })}
-          </button>`).join('')
-      : `<div class="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-surface overflow-hidden">
-           ${renderImagePlaceholder('w-6 h-6')}
+          </div>`).join('')
+      : `<div class="gallery-slide relative min-w-full snap-center aspect-[4/5] flex items-center justify-center overflow-hidden">
+           ${renderImagePlaceholder('w-12 h-12')}
          </div>`;
+
+    const dots = validImages.length > 1
+      ? `<div class="gallery-dots flex items-center justify-center gap-3 py-5">
+          ${validImages.map((_, i) => `
+            <button type="button" data-dot-index="${i}" aria-label="Image ${i + 1}"
+              class="gallery-dot w-1.5 h-1.5 rounded-full transition-all ${i === 0 ? 'gallery-dot-active' : 'bg-black/15'}"></button>`).join('')}
+        </div>`
+      : '<div class="py-3"></div>';
 
     return `
       <div class="product-gallery">
-        <p class="text-[10px] text-muted tracking-widest mb-3 text-right" dir="ltr">${t.refPrefix} ${refCode}</p>
-        <div class="flex flex-col gap-3 md:gap-4 items-start">
-          <div class="flex-1 min-w-0">
-            <div id="product-main-image-wrap" class="relative aspect-[3/4] bg-surface rounded-2xl overflow-hidden">
-              ${validImages.length
-        ? renderImageWithFallback({
-          src: pickImageUrl(validImages[0], 'large'),
-          alt: name,
-          imgClass: 'w-full h-full object-cover',
-          iconSize: 'w-16 h-16',
-        })
-        : renderImagePlaceholder('w-16 h-16')}
-            </div>
-          </div>
-          <div class="flex gap-2 shrink-0">${thumbs}</div>
+        <div id="gallery-track" class="gallery-track flex overflow-x-auto snap-x snap-mandatory no-scrollbar">
+          ${slides}
         </div>
+        ${dots}
       </div>`;
   },
 
   bind(container, callbacks = {}) {
-    const mainWrap = container.querySelector('#product-main-image-wrap');
-    const mainImg = mainWrap?.querySelector('img');
-    const images = (callbacks.images || []).filter((img) => img?.url);
+    const track = container.querySelector('#gallery-track');
+    const dots = container.querySelectorAll('.gallery-dot');
+    if (!track) return;
 
-    container.querySelectorAll('.product-thumb').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.thumbIndex, 10);
-        const src = pickImageUrl(images[idx], 'large');
-        if (!src || !mainImg) return;
-        mainImg.src = src;
-        mainImg.classList.remove('hidden');
-        mainWrap.querySelector('.image-fallback')?.classList.add('hidden');
-        container.querySelectorAll('.product-thumb').forEach((t) => {
-          t.classList.toggle('border-body', t === btn);
-          t.classList.toggle('border-transparent', t !== btn);
-        });
-        callbacks.onThumbChange?.(idx);
+    const setActiveDot = (idx) => {
+      dots.forEach((d, i) => {
+        d.classList.toggle('gallery-dot-active', i === idx);
+        d.classList.toggle('bg-black/15', i !== idx);
+      });
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.dataset.dotIndex, 10);
+        track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+      });
+    });
+
+    let raf = null;
+    track.addEventListener('scroll', () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        if (!dots.length) return;
+        const idx = Math.max(0,
+          Math.min(dots.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+        setActiveDot(idx);
+        callbacks.onSlideChange?.(idx);
       });
     });
   },
