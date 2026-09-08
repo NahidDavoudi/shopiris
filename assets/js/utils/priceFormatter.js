@@ -8,17 +8,17 @@ export function toEnDigit(s) {
     .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 1632);
 }
 
-export function formatPrice(amount, suffix = ' تومان') {
+export function formatPrice(amount, suffix = 'T') {
   const n = Number(amount);
   if (Number.isNaN(n)) return '—';
-  return n.toLocaleString('fa-IR') + suffix;
+  return n.toLocaleString('en-US') + ' ' + suffix;
 }
 
 function _bindPriceInput(inp) {
   inp.addEventListener('input', function () {
     const raw = toEnDigit(this.value).replace(/[^0-9]/g, '');
     if (!raw) { this.value = ''; return; }
-    this.value = Number(raw).toLocaleString('fa-IR');
+    this.value = Number(raw).toLocaleString('en-US');
   });
 
   inp.addEventListener('focus', function () {
@@ -29,7 +29,7 @@ function _bindPriceInput(inp) {
   inp.addEventListener('blur', function () {
     const raw = toEnDigit(this.value).replace(/[^0-9]/g, '');
     if (!raw) { this.value = ''; return; }
-    this.value = Number(raw).toLocaleString('fa-IR');
+    this.value = Number(raw).toLocaleString('en-US');
   });
 }
 
@@ -51,7 +51,7 @@ export function attachPriceFormatterAll(container, selector = '[data-field="pric
 
 /**
  * Safely parse a price input value to integer.
- * Handles Persian/Arabic digits and formatted strings (e.g. "۱۲,۳۴۵").
+ * Handles Persian/Arabic digits and formatted strings (e.g. "12,345").
  * Returns 0 if the value is empty or invalid.
  */
 export function parsePrice(value) {
