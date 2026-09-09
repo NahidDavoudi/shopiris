@@ -24,23 +24,31 @@ const Header = {
 
     return `
       <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/5">
-        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
-          <a href="#/" data-link class="shrink-0">
-            <span class="font-fancy text-xl md:text-2xl text-body tracking-[0.015em]" dir="ltr">${storeConfig.name}</span>
-          </a>
-          <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
-          <div class="flex items-center gap-2">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 grid grid-cols-3 items-center gap-4 md:flex md:justify-between">
+          <div class="flex items-center gap-1 md:hidden">
+            <button id="mobile-menu-btn" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
+              <i data-lucide="menu" class="w-[18px] h-[18px] text-muted"></i>
+            </button>
             <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="search">
               <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
             </button>
+          </div>
+
+          <a href="#/" data-link class="shrink-0 justify-self-center md:justify-self-auto">
+            <span class="font-fancy text-xl md:text-2xl text-body tracking-[0.015em]" dir="ltr">${storeConfig.name}</span>
+          </a>
+
+          <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
+
+          <div class="flex items-center gap-2 justify-self-end">
+            <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="search">
+              <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
+            </button>
+            ${userArea}
             <a href="#/cart" data-link class="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group">
               <i data-lucide="shopping-bag" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
               <span id="cart-badge" class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
             </a>
-            ${userArea}
-            <button id="mobile-menu-btn" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
-              <i data-lucide="menu" class="w-[18px] h-[18px] text-muted"></i>
-            </button>
           </div>
         </div>
         <div id="mobile-menu" class="md:hidden px-4 py-3">

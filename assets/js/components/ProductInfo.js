@@ -95,6 +95,7 @@ const ProductInfo = {
     const priceStr = formatPrice(price);
     const outOfStock = stock === 0;
     const desc = escapeHtml(shortDescription || description || '');
+    const fullDesc = escapeHtml(description || '');
     const safeName = escapeHtml(name);
     const purchaseBlocked = variantSetupIncomplete || outOfStock;
 
@@ -116,13 +117,19 @@ const ProductInfo = {
 
         <p id="product-stock-hint" class="mt-4 text-[11px] uppercase tracking-widest text-accent ${purchaseBlocked ? '' : 'hidden'}">${blockedText}</p>
 
-        <div id="product-buy-bar" class="fixed bottom-0 inset-x-0 z-40">
+        <div id="product-buy-bar" class="bottom-0 inset-x-0 z-40">
           <button type="button" id="buy-now-btn"
                   class="w-full flex items-center justify-between px-6 md:px-10 py-5 bg-[#8a8a8a] hover:bg-black transition-colors text-white disabled:pointer-events-none disabled:opacity-40">
             <span class="text-sm font-bold uppercase tracking-[0.25em]">${t.quickBuy}</span>
             <span id="buy-bar-price" class="text-sm font-semibold tracking-wider" dir="ltr">${priceStr}</span>
           </button>
         </div>
+
+        ${fullDesc ? `
+        <div id="product-description" class="mt-8 pt-6 border-t border-black/10">
+          <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-body mb-3">${t.descriptionTitle || 'توضیحات محصول'}</h2>
+          <p class="text-sm leading-8 text-dim whitespace-pre-line">${fullDesc}</p>
+        </div>` : ''}
       </div>`;
   },
 

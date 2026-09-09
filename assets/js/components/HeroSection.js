@@ -61,18 +61,18 @@ const HeroSection = {
               <h1 class="font-display font-extrabold text-3xl sm:text-4xl md:text-6xl text-white mb-2 leading-none drop-shadow-lg">${hero.title}</h1>
               ${hero.subtitle ? `<p class="text-white/75 text-sm md:text-base">${hero.subtitle}</p>` : ''}
             </div>
-            <div class="hero-cta-stack flex flex-col items-end gap-1 shrink-0">
+            <div class="flex flex-col items-end gap-4 shrink-0">
               ${Button.render({
-          variant: 'text',
+          variant: 'aluminium',
           label: hero.ctaPrimary, // Explore Collection
           href: '#/shop',
-          className: 'hero-cta-link'
+          className: 'hero'
         })}
               ${Button.render({
-          variant: 'text',
+          variant: 'glass',
           label: hero.ctaSecondary, // Categories
           href: '#/categories',
-          className: 'hero-cta-link'
+          className: 'hero'
         })}
             </div>
           </div>

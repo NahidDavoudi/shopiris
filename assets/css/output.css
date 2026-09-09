@@ -1004,6 +1004,12 @@
   :where(.divide-border > :not(:last-child)) {
     border-color: var(--color-border);
   }
+  .justify-self-center {
+    justify-self: center;
+  }
+  .justify-self-end {
+    justify-self: flex-end;
+  }
   .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1579,6 +1585,10 @@
   .text-\[32px\] {
     font-size: 32px;
   }
+  .leading-8 {
+    --tw-leading: calc(var(--spacing) * 8);
+    line-height: calc(var(--spacing) * 8);
+  }
   .leading-none {
     --tw-leading: 1;
     line-height: 1;
@@ -1661,6 +1671,9 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+  .whitespace-pre-line {
+    white-space: pre-line;
   }
   .text-accent {
     color: var(--color-accent);
@@ -2320,6 +2333,9 @@
     .md\:grid-cols-5 {
       grid-template-columns: repeat(5, minmax(0, 1fr));
     }
+    .md\:justify-between {
+      justify-content: space-between;
+    }
     .md\:gap-6 {
       gap: calc(var(--spacing) * 6);
     }
@@ -2331,6 +2347,9 @@
     }
     .md\:gap-y-12 {
       row-gap: calc(var(--spacing) * 12);
+    }
+    .md\:justify-self-auto {
+      justify-self: auto;
     }
     .md\:p-6 {
       padding: calc(var(--spacing) * 6);
