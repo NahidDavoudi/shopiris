@@ -93,7 +93,7 @@ Router.onEnter('products', async function (params) {
         stock: displayStock,
         variantSetupIncomplete: !!p.variant_setup_incomplete,
       });
-
+      console.log(p)
       ProductInfo.bind(infoWrap, {
         variants: p.variants || [],
         variantAxes: p.variant_axes || [],

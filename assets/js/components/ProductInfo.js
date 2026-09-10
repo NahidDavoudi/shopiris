@@ -94,8 +94,9 @@ const ProductInfo = {
     const t = storeConfig.texts.product;
     const priceStr = formatPrice(price);
     const outOfStock = stock === 0;
-    const desc = escapeHtml(shortDescription || description || '');
-    const fullDesc = escapeHtml(description || '');
+    const desc = (shortDescription);
+    console.log(desc);
+    const fullDesc = escapeHtml(description);
     const safeName = escapeHtml(name);
     const purchaseBlocked = variantSetupIncomplete || outOfStock;
 
@@ -111,7 +112,7 @@ const ProductInfo = {
     return `
       <div class="product-info max-w-xl mx-auto px-4 font-display">
         <h1 class="text-lg md:text-2xl font-bold uppercase tracking-[0.25em] text-body leading-relaxed">${safeName}</h1>
-        ${desc ? `<p class="mt-2 text-sm font-light uppercase tracking-[0.15em] text-muted">${desc}</p>` : ''}
+        <p class="mt-2 text-sm font-light uppercase tracking-[0.15em] text-muted">${desc}</p>
 
         ${axesHtml ? `<div id="product-variant-selectors" class="mt-8">${axesHtml}</div>` : ''}
 
@@ -125,12 +126,12 @@ const ProductInfo = {
           </button>
         </div>
 
-        ${fullDesc ? `
         <div id="product-description" class="mt-8 pt-6 border-t border-black/10">
-          <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-body mb-3">${t.descriptionTitle || 'توضیحات محصول'}</h2>
+          <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-body mb-3">${t.descriptionTitle || 'description'}</h2>
           <p class="text-sm leading-8 text-dim whitespace-pre-line">${fullDesc}</p>
-        </div>` : ''}
-      </div>`;
+        </div>
+      </div>
+      `;
   },
 
   bind(container, callbacks = {}) {
