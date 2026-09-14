@@ -35,7 +35,7 @@ const Header = {
           </div>
 
           <a href="#/" data-link class="shrink-0 justify-self-center md:justify-self-auto">
-            <span class="font-fancy text-xl md:text-2xl text-body tracking-[0.015em]" dir="ltr">${storeConfig.name}</span>
+            <img src="assets/images/text_logo.png" alt="IRIS" class="h-6 md:h-7 w-auto object-contain">
           </a>
 
           <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
