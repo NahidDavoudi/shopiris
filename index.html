@@ -27,6 +27,7 @@
       /* font-family: var(--font-display); */
       background-color: #ffffff;
       color: #1d1d1f;
+      padding-top: 64px;
     }
 
     .tab-active {
@@ -238,12 +239,12 @@
   </style>
 </head>
 
-<body class="bg-body text-body overflow-x-hidden">
+<body class="bg-body text-body">
 
   <!-- Header and Footer are populated by JS but their dynamic classes do not change -->
   <div id="app-header"></div>
 
-  <div id="router-outlet">
+  <div id="router-outlet" class="overflow-x-hidden">
 
     <!-- Home Page (HOME) -->
     <div data-page="home">
