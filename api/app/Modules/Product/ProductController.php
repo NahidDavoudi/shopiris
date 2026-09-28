@@ -107,6 +107,23 @@ class ProductController extends Controller
         }
     }
 
+    // POST /api/v1/admin/products/bulk-price
+    public function bulkUpdatePrice(Request $request): void
+    {
+        try {
+            $result = $this->service->bulkUpdatePricesByCategory([
+                'category_id'     => $request->input('category_id'),
+                'operation'       => $request->input('operation'),
+                'value'           => $request->input('value'),
+                'field'           => $request->input('field', 'price'),
+                'include_variants'=> $request->input('include_variants', true),
+            ]);
+            $this->success($result, 'قیمت محصولات دسته‌بندی بروزرسانی شد');
+        } catch (\RuntimeException $e) {
+            $this->error($e->getMessage(), $e->getCode() ?: 400);
+        }
+    }
+
     // DELETE /api/v1/admin/products/{id}
     public function destroy(Request $request, int $id): void
     {

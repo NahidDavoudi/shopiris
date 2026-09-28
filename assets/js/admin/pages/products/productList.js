@@ -5,6 +5,7 @@ import { openProductEditor, initProductEditor } from './productEditor.js';
 import { renderImageWithFallback } from '../../../utils/imagePlaceholder.js';
 import { escapeHtml } from '../../../utils/htmlEscape.js';
 import { resolveProductStatus } from '../../../utils/productStatus.js';
+import './bulkPrice.js';
 
 let _products = [];
 let _categories = [];

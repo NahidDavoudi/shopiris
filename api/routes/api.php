@@ -119,6 +119,7 @@ $router->group([
         // Products
         $router->get('/products',                          [ProductController::class, 'adminIndex']);
         $router->post('/products',                         [ProductController::class, 'store']);
+        $router->post('/products/bulk-price',              [ProductController::class, 'bulkUpdatePrice']);
         $router->put('/products/{id}',                     [ProductController::class, 'update']);
         $router->delete('/products/{id}',                  [ProductController::class, 'destroy']);
         $router->patch('/products/{id}/toggle',            [ProductController::class, 'toggle']);

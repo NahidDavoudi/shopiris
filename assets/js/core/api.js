@@ -347,6 +347,7 @@ const products = {
   get: (id) => get(`/products/${id}`),
   create: (data) => post('/admin/products', data),
   update: (id, data) => put(`/admin/products/${id}`, data),
+  bulkUpdatePrice: (data) => post('/admin/products/bulk-price', data),
   delete: (id) => del(`/admin/products/${id}`),
   toggle: (id) => patch(`/admin/products/${id}/toggle`),
   addImage: (id, file, meta = {}) => {

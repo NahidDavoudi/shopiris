@@ -213,9 +213,14 @@
                             <h1 class="text-2xl md:text-3xl font-bold text-body" data-admin-text="products.title">محصولات</h1>
                             <p class="text-muted mt-1" data-admin-text="products.subtitle">مدیریت محصولات فروشگاه</p>
                         </div>
-                        <button onclick="showProductModal()" class="bg-accent hover:bg-accent-hover text-white px-5 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-black/10">
-                            <i data-lucide="plus" class="w-5 h-5"></i><span data-admin-text="products.add">افزودن محصول</span>
-                        </button>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" onclick="openBulkPriceModal()" class="bg-body border border-border text-body px-5 py-3 rounded-xl font-medium transition-all flex items-center gap-2 hover:bg-card">
+                                <i data-lucide="tags" class="w-5 h-5"></i><span>تغییر قیمت دسته</span>
+                            </button>
+                            <button onclick="showProductModal()" class="bg-accent hover:bg-accent-hover text-white px-5 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-black/10">
+                                <i data-lucide="plus" class="w-5 h-5"></i><span data-admin-text="products.add">افزودن محصول</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-body border border-border rounded-2xl p-5 mb-6">
@@ -703,6 +708,58 @@
                 </section>
             </div>
         </main>
+    </div>
+
+    <!-- ========== BULK PRICE MODAL ========== -->
+    <div id="bulkPriceModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-body border border-border rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto custom-scroll animate-scaleIn">
+            <div class="p-6 border-b border-border flex items-center justify-between">
+                <h3 class="text-xl font-bold text-body">تغییر گروهی قیمت محصولات</h3>
+                <button type="button" onclick="hideModal('bulkPriceModal')" class="text-dim hover:text-accent hover:bg-accent/10 p-2 rounded-xl transition-all"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="bulkPriceForm" class="p-6 space-y-5">
+                <div>
+                    <label for="bulkPriceCategory" class="block text-muted mb-2 text-sm">دسته‌بندی *</label>
+                    <select id="bulkPriceCategory" required class="w-full bg-card border border-border rounded-xl px-4 py-3 text-body focus:border-accent outline-none">
+                        <option value="">انتخاب دسته‌بندی</option>
+                    </select>
+                    <p id="bulkPriceProductCount" class="text-xs text-muted mt-2">یک دسته‌بندی انتخاب کنید.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="bulkPriceOperation" class="block text-muted mb-2 text-sm">روش تغییر</label>
+                        <select id="bulkPriceOperation" class="w-full bg-card border border-border rounded-xl px-4 py-3 text-body focus:border-accent outline-none">
+                            <option value="percent_increase">افزایش درصدی</option>
+                            <option value="percent_decrease">کاهش درصدی</option>
+                            <option value="fixed_increase">افزایش مبلغ ثابت</option>
+                            <option value="fixed_decrease">کاهش مبلغ ثابت</option>
+                            <option value="set">تعیین قیمت جدید</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label id="bulkPriceValueLabel" for="bulkPriceValue" class="block text-muted mb-2 text-sm">درصد افزایش</label>
+                        <input type="number" id="bulkPriceValue" min="0" step="1" required class="w-full bg-card border border-border rounded-xl px-4 py-3 text-body focus:border-accent outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label for="bulkPriceField" class="block text-muted mb-2 text-sm">قیمت‌های قابل تغییر</label>
+                    <select id="bulkPriceField" class="w-full bg-card border border-border rounded-xl px-4 py-3 text-body focus:border-accent outline-none">
+                        <option value="price">قیمت اصلی</option>
+                        <option value="sale_price">قیمت فروش ویژه</option>
+                        <option value="both">قیمت اصلی و فروش ویژه</option>
+                    </select>
+                </div>
+                <label class="flex items-start gap-3 text-sm text-body">
+                    <input type="checkbox" id="bulkPriceIncludeVariants" checked class="mt-0.5 rounded bg-surface border-border w-5 h-5">
+                    <span>اعمال تغییر روی قیمت واریانت‌ها نیز انجام شود</span>
+                </label>
+                <p class="text-xs text-muted leading-relaxed">درصد یا مبلغ ثابت روی قیمت‌های فروش ویژه ثبت‌شده اعمال می‌شود. انتخاب «تعیین قیمت جدید» برای قیمت فروش ویژه، آن را برای همه محصولات دسته تنظیم می‌کند. کاهش مبلغ ثابت تنها در صورتی انجام می‌شود که هیچ قیمت منفی نشود.</p>
+                <div class="flex gap-3 pt-2">
+                    <button id="bulkPriceSubmit" type="submit" class="bg-accent hover:bg-accent-hover text-white px-6 py-3 rounded-xl font-medium transition-all">اعمال تغییر قیمت</button>
+                    <button type="button" onclick="hideModal('bulkPriceModal')" class="bg-body hover:bg-surface border border-border text-muted px-6 py-3 rounded-xl font-medium transition-all">انصراف</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- ========== PRODUCT MODAL ========== -->

@@ -4,6 +4,8 @@ namespace App\Modules\Product;
 
 use App\Modules\Attribute\AttributeTypeModel;
 use App\Modules\Variant\VariantService;
+use App\Modules\Category\CategoryModel;
+use App\Core\Database\Database;
 use App\Utils\SlugHelper;
 
 class ProductService
@@ -26,6 +28,148 @@ class ProductService
     public function adminList(array $filters = []): array
     {
         return $this->productModel->paginateAdmin($filters);
+    }
+
+    public function bulkUpdatePricesByCategory(array $data): array
+    {
+        $categoryId = filter_var($data['category_id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$categoryId || $categoryId < 1) {
+            throw new \RuntimeException('دسته‌بندی معتبر انتخاب کنید.', 422);
+        }
+
+        if (!(new CategoryModel())->find($categoryId)) {
+            throw new \RuntimeException('دسته‌بندی یافت نشد.', 404);
+        }
+
+        $operation = $data['operation'] ?? '';
+        $operations = ['percent_increase', 'percent_decrease', 'fixed_increase', 'fixed_decrease', 'set'];
+        if (!in_array($operation, $operations, true)) {
+            throw new \RuntimeException('نوع تغییر قیمت معتبر نیست.', 422);
+        }
+
+        $field = $data['field'] ?? 'price';
+        if (!in_array($field, ['price', 'sale_price', 'both'], true)) {
+            throw new \RuntimeException('نوع قیمت انتخاب‌شده معتبر نیست.', 422);
+        }
+
+        $rawValue = $data['value'] ?? null;
+        if (!is_numeric($rawValue) || !is_finite((float) $rawValue) || (float) $rawValue < 0) {
+            throw new \RuntimeException('مقدار قیمت باید عددی و غیرمنفی باشد.', 422);
+        }
+        $value = (float) $rawValue;
+        if ($operation !== 'set' && $value <= 0) {
+            throw new \RuntimeException('مقدار تغییر باید بیشتر از صفر باشد.', 422);
+        }
+        if (str_starts_with($operation, 'percent_') && ($value <= 0 || $value > ($operation === 'percent_decrease' ? 100 : 1000))) {
+            throw new \RuntimeException($operation === 'percent_decrease'
+                ? 'درصد کاهش باید بیشتر از صفر و حداکثر ۱۰۰ باشد.'
+                : 'درصد افزایش باید بیشتر از صفر و حداکثر ۱۰۰۰ باشد.', 422);
+        }
+        if (in_array($operation, ['fixed_increase', 'fixed_decrease', 'set'], true) && floor($value) !== $value) {
+            throw new \RuntimeException('مبلغ باید به تومان صحیح وارد شود.', 422);
+        }
+
+        $includeVariants = filter_var($data['include_variants'] ?? true, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($includeVariants === null) {
+            throw new \RuntimeException('تنظیم واریانت‌ها معتبر نیست.', 422);
+        }
+
+        $fields = $field === 'both' ? ['price', 'sale_price'] : [$field];
+        $pdo = Database::getInstance()->getConnection();
+
+        $pdo->beginTransaction();
+        try {
+            $count = $pdo->prepare('SELECT COUNT(*) FROM products WHERE category_id = ?');
+            $count->execute([$categoryId]);
+            $productCount = (int) $count->fetchColumn();
+
+            $variantCount = 0;
+            if ($includeVariants) {
+                $variantCountSql = "SELECT COUNT(*) FROM product_variants pv JOIN products p ON p.id = pv.product_id WHERE p.category_id = ?";
+                $variantStmt = $pdo->prepare($variantCountSql);
+                $variantStmt->execute([$categoryId]);
+                $variantCount = (int) $variantStmt->fetchColumn();
+            }
+
+            if ($operation === 'fixed_decrease') {
+                foreach ($fields as $column) {
+                    $nullableCondition = $column === 'sale_price' ? " AND `{$column}` IS NOT NULL" : '';
+                    $productCheck = $pdo->prepare("SELECT 1 FROM products WHERE category_id = ? AND `{$column}` < ?{$nullableCondition} LIMIT 1");
+                    $productCheck->execute([$categoryId, $value]);
+                    if ($productCheck->fetchColumn()) {
+                        throw new \RuntimeException('کاهش قیمت باعث منفی شدن قیمت یکی از محصولات می‌شود.', 422);
+                    }
+
+                    if ($includeVariants) {
+                        $variantNullCondition = $column === 'sale_price' ? ' AND pv.`sale_price` IS NOT NULL' : '';
+                        $variantCheck = $pdo->prepare("SELECT 1 FROM product_variants pv JOIN products p ON p.id = pv.product_id WHERE p.category_id = ? AND pv.`{$column}` < ?{$variantNullCondition} LIMIT 1");
+                        $variantCheck->execute([$categoryId, $value]);
+                        if ($variantCheck->fetchColumn()) {
+                            throw new \RuntimeException('کاهش قیمت باعث منفی شدن قیمت یکی از واریانت‌ها می‌شود.', 422);
+                        }
+                    }
+                }
+            }
+
+            $setParts = [];
+            $params = [];
+            foreach ($fields as $column) {
+                $expression = $this->priceExpression("`{$column}`", $operation);
+                $setParts[] = "`{$column}` = {$expression}";
+                if ($operation === 'set') {
+                    $params[] = (int) round($value);
+                } else {
+                    $params[] = $value;
+                }
+            }
+            $params[] = $categoryId;
+            $updateProducts = $pdo->prepare('UPDATE products SET ' . implode(', ', $setParts) . ', updated_at = CURRENT_TIMESTAMP WHERE category_id = ?');
+            $updateProducts->execute($params);
+
+            if ($includeVariants) {
+                $variantSetParts = [];
+                $variantParams = [];
+                foreach ($fields as $column) {
+                    $expression = $this->priceExpression("pv.`{$column}`", $operation);
+                    $variantSetParts[] = "pv.`{$column}` = {$expression}";
+                    if ($operation === 'set') {
+                        $variantParams[] = (int) round($value);
+                    } else {
+                        $variantParams[] = $value;
+                    }
+                }
+                $variantParams[] = $categoryId;
+                $updateVariants = $pdo->prepare(
+                    'UPDATE product_variants pv JOIN products p ON p.id = pv.product_id SET '
+                    . implode(', ', $variantSetParts) . ', pv.updated_at = CURRENT_TIMESTAMP'
+                    . ' WHERE p.category_id = ?',
+                );
+                $updateVariants->execute($variantParams);
+            }
+
+            $pdo->commit();
+            return [
+                'updated_products' => $productCount,
+                'updated_variants' => $includeVariants ? $variantCount : 0,
+                'category_id' => $categoryId,
+            ];
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    private function priceExpression(string $column, string $operation): string
+    {
+        return match ($operation) {
+            'percent_increase' => "ROUND({$column} * (1 + ? / 100), 0)",
+            'percent_decrease' => "ROUND({$column} * (1 - ? / 100), 0)",
+            'fixed_increase' => "{$column} + ?",
+            'fixed_decrease' => "{$column} - ?",
+            'set' => '?',
+        };
     }
 
     public function getFeatured(int $limit = 8): array
