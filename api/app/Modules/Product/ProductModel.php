@@ -128,6 +128,18 @@ class ProductModel extends Model
         return $product;
     }
 
+    public function getByCategoryId(int $categoryId): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT id, name, slug, product_type
+            FROM {$this->table}
+            WHERE category_id = ?
+            ORDER BY id ASC
+        ");
+        $stmt->execute([$categoryId]);
+        return $stmt->fetchAll();
+    }
+
     public function getImages(int $productId): array
     {
         $stmt = $this->pdo->prepare("

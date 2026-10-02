@@ -130,6 +130,7 @@ $router->group([
         $router->put('/products/{id}/variants/bulk',       [VariantController::class, 'bulkUpdate']);
 
         // Variants
+        $router->post('/categories/{id}/variants/generate', [VariantController::class, 'bulkGenerateByCategory']);
         $router->put('/variants/{id}',                     [VariantController::class, 'update']);
 
         // Attribute types

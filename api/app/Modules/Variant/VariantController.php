@@ -41,6 +41,18 @@ class VariantController extends Controller
         }
     }
 
+    // POST /api/v1/admin/categories/{id}/variants/generate
+    public function bulkGenerateByCategory(Request $request, int $id): void
+    {
+        try {
+            $overwrite = filter_var($request->input('overwrite', true), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+            $result    = $this->service->bulkGenerateByCategory($id, $request->input('axes', []), $overwrite);
+            $this->success($result, 'سایزبندی گروهی محصولات دسته‌بندی اعمال شد');
+        } catch (\RuntimeException $e) {
+            $this->error($e->getMessage(), $e->getCode() ?: 400);
+        }
+    }
+
     // PUT /api/v1/admin/variants/{id}
     public function update(Request $request, int $id): void
     {

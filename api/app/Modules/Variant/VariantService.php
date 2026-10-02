@@ -87,29 +87,9 @@ class VariantService
             throw new \RuntimeException('محصول یافت نشد.', 404);
         }
 
-        if (empty($axes)) {
-            throw new \RuntimeException('حداقل یک محور واریانت الزامی است.', 422);
-        }
-
-        if (count($axes) > 3) {
-            throw new \RuntimeException('حداکثر ۳ محور واریانت مجاز است.', 422);
-        }
+        $axisValues = $this->resolveAxes($axes);
 
         $slug = $product['slug'] ?: SlugHelper::make($product['name'], 'product-' . $productId);
-
-        $axisValues = [];
-        foreach ($axes as $axis) {
-            $typeId   = (int) ($axis['type_id'] ?? 0);
-            $valueIds = array_map('intval', $axis['value_ids'] ?? []);
-            if (!$typeId || empty($valueIds)) {
-                throw new \RuntimeException('محور واریانت نامعتبر است.', 422);
-            }
-            $values = $this->valueModel->getByIds($valueIds);
-            if (count($values) !== count($valueIds)) {
-                throw new \RuntimeException('مقادیر ویژگی نامعتبر است.', 422);
-            }
-            $axisValues[] = $values;
-        }
 
         $combinations = $this->cartesianProduct($axisValues);
         $pdo          = Database::getInstance()->getConnection();
@@ -157,6 +137,51 @@ class VariantService
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    public function bulkGenerateByCategory(int $categoryId, array $axes, bool $overwrite = true): array
+    {
+        if (!(new \App\Modules\Category\CategoryModel())->find($categoryId)) {
+            throw new \RuntimeException('دسته‌بندی یافت نشد.', 404);
+        }
+
+        $this->resolveAxes($axes);
+
+        $products        = $this->productModel->getByCategoryId($categoryId);
+        $updatedProducts = 0;
+        $createdVariants = 0;
+        $skippedProducts = 0;
+        $failures        = [];
+
+        foreach ($products as $product) {
+            $productId = (int) $product['id'];
+
+            try {
+                if (!$overwrite && !empty($this->variantModel->getByProductId($productId))) {
+                    $skippedProducts++;
+                    continue;
+                }
+
+                $created          = $this->generateVariants($productId, $axes);
+                $createdVariants += count($created);
+                $updatedProducts++;
+            } catch (\Throwable $e) {
+                $failures[] = [
+                    'product_id'   => $productId,
+                    'product_name' => $product['name'] ?? '',
+                    'message'      => $e->getMessage(),
+                ];
+            }
+        }
+
+        return [
+            'category_id'      => $categoryId,
+            'updated_products' => $updatedProducts,
+            'created_variants' => $createdVariants,
+            'skipped_products' => $skippedProducts,
+            'failed_products'  => count($failures),
+            'failures'         => $failures,
+        ];
     }
 
     public function updateVariant(int $variantId, array $data): array
@@ -273,6 +298,33 @@ class VariantService
             return (int) $product['sale_price'];
         }
         return (int) ($product['price'] ?? 0);
+    }
+
+    private function resolveAxes(array $axes): array
+    {
+        if (empty($axes)) {
+            throw new \RuntimeException('حداقل یک محور واریانت الزامی است.', 422);
+        }
+
+        if (count($axes) > 3) {
+            throw new \RuntimeException('حداکثر ۳ محور واریانت مجاز است.', 422);
+        }
+
+        $axisValues = [];
+        foreach ($axes as $axis) {
+            $typeId   = (int) ($axis['type_id'] ?? 0);
+            $valueIds = array_map('intval', $axis['value_ids'] ?? []);
+            if (!$typeId || empty($valueIds)) {
+                throw new \RuntimeException('محور واریانت نامعتبر است.', 422);
+            }
+            $values = $this->valueModel->getByIds($valueIds);
+            if (count($values) !== count($valueIds)) {
+                throw new \RuntimeException('مقادیر ویژگی نامعتبر است.', 422);
+            }
+            $axisValues[] = $values;
+        }
+
+        return $axisValues;
     }
 
     private function cartesianProduct(array $arrays): array

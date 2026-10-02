@@ -348,6 +348,7 @@ const products = {
   create: (data) => post('/admin/products', data),
   update: (id, data) => put(`/admin/products/${id}`, data),
   bulkUpdatePrice: (data) => post('/admin/products/bulk-price', data),
+  bulkGenerateVariants: (categoryId, axes, overwrite = true) => post(`/admin/categories/${categoryId}/variants/generate`, { axes, overwrite }),
   delete: (id) => del(`/admin/products/${id}`),
   toggle: (id) => patch(`/admin/products/${id}/toggle`),
   addImage: (id, file, meta = {}) => {

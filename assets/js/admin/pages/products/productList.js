@@ -6,6 +6,7 @@ import { renderImageWithFallback } from '../../../utils/imagePlaceholder.js';
 import { escapeHtml } from '../../../utils/htmlEscape.js';
 import { resolveProductStatus } from '../../../utils/productStatus.js';
 import './bulkPrice.js';
+import './bulkSize.js';
 
 let _products = [];
 let _categories = [];
