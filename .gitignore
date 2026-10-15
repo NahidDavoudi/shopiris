@@ -3,3 +3,4 @@ node_modules
 api/.htaccess
 api/v1/.htaccess
 AGENTS.md
+api/vendor/
