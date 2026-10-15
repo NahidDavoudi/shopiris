@@ -1,4 +1,4 @@
-service:
+services:
   shop-iris:
     build:
       context: .
@@ -10,10 +10,8 @@ service:
     volumes:
       - ./uploads:/var/www/html/uploads
       - ./api/.env:/var/www/html/.env:ro
-    ports:
-      - "80:80"
-    depends_on:
-      - db
+    expose:
+      - "80"
     mem_limit: 512m
     networks: [proxy, db_net]
 
