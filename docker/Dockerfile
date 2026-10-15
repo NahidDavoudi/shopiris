@@ -22,7 +22,7 @@ RUN sed -ri "s!/var/www/html!/var/www/html/public!g" \
 RUN sed -ri "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 
 COPY api/ /var/www/html/
-COPY --from=vendor /app/vendor/ /var/www/html/vendor/
+COPY --from=vendor /api/vendor/ /var/www/html/vendor/
 RUN mkdir -p /var/www/html/uploads /var/www/html/storage/cache /var/www/html/storage/logs \
     && chown -R www-data:www-data /var/www/html
 
