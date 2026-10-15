@@ -1,0 +1,24 @@
+service:
+  shop-iris:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    env_file: ./api/.env
+    environment:
+      TZ: Asia/Tehran
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./api/.env:/var/www/html/.env:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    mem_limit: 512m
+    networks: [proxy, db_net]
+
+networks:
+  proxy:
+    external: true
+  db_net:
+    external: true
