@@ -3,7 +3,7 @@ WORKDIR /api
 COPY api/composer.json api/composer.lock ./
 RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --optimize-autoloader
 
-FROM php:8.3-apache AS runtime
+FROM php:8.3-apache
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev libjpeg-dev libwebp-dev libfreetype6-dev libzip-dev libicu-dev \
     && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
@@ -17,12 +17,15 @@ COPY docker/remoteip.conf /etc/apache2/conf-available/remoteip.conf
 COPY docker/apache-tune.conf /etc/apache2/conf-available/apache-tune.conf
 RUN a2enconf remoteip apache-tune
 
-RUN sed -ri "s!/var/www/html!/var/www/html/public!g" \
-    /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# iris index.phpライブ in api/ ریشه است (پوشه public وجود ندارد) → داکرroot را /var/www/html نگه می‌داریم
 RUN sed -ri "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 
+# API (api/index.php) و فایل‌های استاتیک-frontend (index.html, login.html, admin.html, assets/) را در داکرroot کپی می‌کنیم
 COPY api/ /var/www/html/
 COPY --from=vendor /api/vendor/ /var/www/html/vendor/
+COPY assets/ /var/www/html/assets/
+COPY index.html login.html admin.html /var/www/html/
+
 RUN mkdir -p /var/www/html/uploads /var/www/html/storage/cache /var/www/html/storage/logs \
     && chown -R www-data:www-data /var/www/html
 
