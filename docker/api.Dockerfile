@@ -18,7 +18,6 @@ COPY docker/remoteip.conf /etc/apache2/conf-available/remoteip.conf
 COPY docker/apache-tune.conf /etc/apache2/conf-available/apache-tune.conf
 RUN a2enconf remoteip apache-tune
 
-# index.php تو ریشه‌ی api/ هست، پس DocumentRoot همون /var/www/html می‌مونه
 RUN sed -ri "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 
 COPY api/ /var/www/html/
