@@ -4,3 +4,6 @@ api/.htaccess
 api/v1/.htaccess
 AGENTS.md
 api/vendor/
+public/uploads/
+!public/uploads/.gitkeeppublic/uploads/*
+!public/uploads/.gitkeep
