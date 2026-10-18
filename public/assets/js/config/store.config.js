@@ -786,6 +786,6 @@ export default {
   },
 
   api: {
-    baseUrl: 'api/v1',
+    baseUrl: 'https://api.shopiris.ir/api/v1',
   },
 };
