@@ -374,6 +374,13 @@ const products = {
   updateVariant: (id, data) => put(`/admin/variants/${id}`, data),
 };
 
+const search = {
+  query: (q, limit = 10, opts = {}) => withFallback(
+    get('/search', { q, limit }, opts),
+    { query: q, normalized_query: q, tokens: [], total: 0, items: [], took_ms: 0, cached: false },
+  ),
+};
+
 const categories = {
   list: () => withFallback(get('/categories'), CFG().fallback?.categories ?? []),
   get: (id) => get(`/categories/${id}`),
@@ -462,6 +469,7 @@ const api = {
   settings,
   users,
   products,
+  search,
   categories,
   cart,
   orders,

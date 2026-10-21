@@ -13,6 +13,7 @@ import Header from './components/Header.js';
 import Footer from './components/Footer.js';
 import ProductCard from './components/ProductCard.js';
 import { quickAddNeedsProductPage } from './utils/variantHelpers.js';
+import SearchOverlay from './components/SearchOverlay.js';
 
 import './pages/home.js';
 import './pages/shop.js';
@@ -78,7 +79,15 @@ function mountShell() {
         await api.auth.logout();
         window.location.reload();
       },
+      onOpenSearch: () => SearchOverlay.open(),
     });
+  }
+
+  // Search overlay — mount مستقل از header (برای ز-index بالاتر و کنترل کامل)
+  const searchEl = document.getElementById('app-search-overlay');
+  if (searchEl) {
+    searchEl.innerHTML = SearchOverlay.render();
+    SearchOverlay.bind(searchEl);
   }
 
   const footerEl = document.getElementById('app-footer');
@@ -87,6 +96,17 @@ function mountShell() {
     Footer.bind(footerEl);
   }
 }
+
+// میانبر Ctrl/Cmd + K برای باز کردن جستجو
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    // اگر کاربر در حال تایپ در input/textarea است، مداخله نکن
+    const tag = (e.target?.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+    e.preventDefault();
+    SearchOverlay.open();
+  }
+});
 
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.add-to-cart-quick');
