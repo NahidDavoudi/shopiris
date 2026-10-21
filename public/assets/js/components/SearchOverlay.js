@@ -31,7 +31,7 @@ const SearchOverlay = {
 
   render() {
     return `
-      <div id="search-overlay" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-label="جستجو">
+      <div id="search-overlay" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-label="Search">
         <div id="search-overlay-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
         <div class="search-overlay-panel relative max-w-2xl mx-auto mt-[8vh] md:mt-[10vh] px-4">
           <div class="bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
@@ -40,21 +40,21 @@ const SearchOverlay = {
               <input
                 type="text"
                 id="search-overlay-input"
-                placeholder="جستجو در محصولات..."
+                placeholder="Search products..."
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
                 spellcheck="false"
-                dir="rtl"
+                dir="ltr"
                 class="flex-1 bg-transparent text-body text-base md:text-lg focus:outline-none placeholder:text-muted/60"
               />
               <button type="button" id="search-overlay-clear"
                       class="hidden text-muted hover:text-body text-xs px-2 py-1 rounded hover:bg-white/5 transition-colors">
-                پاک کردن
+                Clear
               </button>
               <button type="button" id="search-overlay-close"
                       class="text-muted hover:text-body p-1 rounded-full hover:bg-white/5 transition-colors"
-                      aria-label="بستن">
+                      aria-label="Close">
                 <i data-lucide="x" class="w-4 h-4"></i>
               </button>
             </div>
@@ -62,7 +62,7 @@ const SearchOverlay = {
             <div id="search-overlay-footer" class="hidden px-5 py-3 border-t border-border flex items-center justify-between gap-3 text-xs">
               <span id="search-overlay-count" class="text-muted"></span>
               <a href="#" id="search-overlay-viewall" class="text-accent hover:underline font-medium whitespace-nowrap">
-                مشاهده همه نتایج ←
+                View all results →
               </a>
             </div>
           </div>
@@ -139,7 +139,7 @@ const SearchOverlay = {
     };
     document.addEventListener('keydown', this._onGlobalKey);
 
-    // اگر کاربر با back/forward ناوبری کرد، ببند
+    // Close if the user navigates via back/forward
     this._onHashChange = () => {
       if (this._state.isOpen) this.close();
     };
@@ -173,7 +173,7 @@ const SearchOverlay = {
       else this._renderHint();
     }
 
-    // فوکوس بعد از رندر
+    // Focus after render
     requestAnimationFrame(() => this._els.input.focus());
     if (window.lucide) lucide.createIcons();
   },
@@ -277,7 +277,7 @@ const SearchOverlay = {
       this._state.items = [];
       this._state.total = 0;
       this._state.loading = false;
-      this._state.error = err?.message || 'خطا در جستجو';
+      this._state.error = err?.message || 'Search failed';
       this._renderResults();
     }
   },
@@ -305,7 +305,7 @@ const SearchOverlay = {
     this._els.body.innerHTML = `
       <div class="p-10 text-center text-muted">
         <i data-lucide="search" class="w-10 h-10 mx-auto mb-3 text-muted/60"></i>
-        <p class="text-sm">برای شروع جستجو تایپ کنید</p>
+        <p class="text-sm">Start typing to search</p>
       </div>`;
     if (window.lucide) lucide.createIcons();
   },
@@ -314,7 +314,7 @@ const SearchOverlay = {
     this._els.footer.classList.add('hidden');
     this._els.body.innerHTML = `
       <div class="p-8 text-center text-muted">
-        <p class="text-sm">حداقل ${MIN_QUERY} کاراکتر وارد کنید</p>
+        <p class="text-sm">Enter at least ${MIN_QUERY} characters</p>
       </div>`;
   },
 
@@ -328,18 +328,18 @@ const SearchOverlay = {
     this._els.body.innerHTML = `
       <div class="p-3">
         <div class="flex items-center justify-between px-2 py-2 mb-1">
-          <span class="text-xs text-muted font-medium">جستجوهای اخیر</span>
+          <span class="text-xs text-muted font-medium">Recent searches</span>
           <button type="button" id="search-overlay-clear-recent"
                   class="text-xs text-muted hover:text-accent transition-colors">
-            پاک کردن
+            Clear
           </button>
         </div>
         ${recent.map((q) => `
           <button type="button" data-recent="${this._esc(q)}"
-                  class="w-full text-right flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors">
+                  class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors">
             <i data-lucide="clock" class="w-4 h-4 text-muted shrink-0"></i>
             <span class="text-sm text-body flex-1">${this._esc(q)}</span>
-            <i data-lucide="arrow-up-left" class="w-3.5 h-3.5 text-muted/60 shrink-0"></i>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-muted/60 shrink-0"></i>
           </button>
         `).join('')}
       </div>`;
@@ -364,8 +364,8 @@ const SearchOverlay = {
       this._els.body.innerHTML = `
         <div class="p-10 text-center">
           <i data-lucide="package-search" class="w-10 h-10 mx-auto mb-3 text-muted/60"></i>
-          <p class="text-sm text-body mb-1">نتیجه‌ای یافت نشد</p>
-          <p class="text-xs text-muted">عبارت دیگری را امتحان کنید</p>
+          <p class="text-sm text-body mb-1">No results found</p>
+          <p class="text-xs text-muted">Try a different phrase</p>
         </div>`;
       if (window.lucide) lucide.createIcons();
       return;
@@ -385,14 +385,14 @@ const SearchOverlay = {
               ? `<img src="${this._esc(img)}" alt="${this._esc(p.name)}" class="w-full h-full object-cover" loading="lazy" />`
               : `<i data-lucide="image" class="w-5 h-5 text-muted/60"></i>`}
           </div>
-          <div class="flex-1 min-w-0 text-right">
+          <div class="flex-1 min-w-0 text-left">
             <p class="text-sm text-body font-medium truncate">${this._esc(p.name)}</p>
-            <div class="flex items-center gap-2 mt-0.5 flex-row-reverse justify-end">
+            <div class="flex items-center gap-2 mt-0.5 justify-start">
               ${p.category_name ? `<span class="text-[10px] text-muted truncate">${this._esc(p.category_name)}</span>` : ''}
-              ${outOfStock ? `<span class="text-[10px] text-accent">ناموجود</span>` : ''}
+              ${outOfStock ? `<span class="text-[10px] text-accent">Out of stock</span>` : ''}
             </div>
           </div>
-          <div class="text-left shrink-0">
+          <div class="text-right shrink-0">
             ${hasSale
               ? `<p class="text-[11px] text-muted line-through ltr">${formatPrice(p.price)}</p>
                  <p class="text-sm text-accent font-bold ltr">${formatPrice(finalPrice)}</p>`
@@ -410,9 +410,9 @@ const SearchOverlay = {
     const took = this._state.tookMs;
     let countText = '';
     if (total > shown) {
-      countText = `${shown.toLocaleString('fa-IR')} از ${total.toLocaleString('fa-IR')} نتیجه`;
+      countText = `${shown.toLocaleString('en-US')} of ${total.toLocaleString('en-US')} results`;
     } else {
-      countText = `${total.toLocaleString('fa-IR')} نتیجه`;
+      countText = `${total.toLocaleString('en-US')} results`;
     }
     if (took != null) countText += ` • ${took}ms`;
     this._els.count.textContent = countText;
