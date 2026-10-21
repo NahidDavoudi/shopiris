@@ -14,45 +14,53 @@ const Header = {
       </a>`).join('');
 
     const userArea = loggedIn
-      ? `<div class="flex items-center gap-3">
+      ? `<div class="flex items-center gap-2">
            <span class="text-xs text-muted hidden sm:inline">${user?.name || user?.phone || ''}</span>
            <button id="header-logout-btn" class="text-xs text-muted hover:text-body transition-colors">logout</button>
          </div>`
-      : `<a href="login.html" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="login">
+      : `<a href="login.html" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="login" aria-label="login">
            <i data-lucide="user" class="w-[18px] h-[18px] text-muted"></i>
          </a>`;
 
     return `
       <header class="fixed top-0 left-0 right-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-black/5">
-        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 grid grid-cols-3 items-center gap-4 md:flex md:justify-between">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 grid grid-cols-3 items-center gap-2 md:flex md:justify-between">
           <div class="flex items-center gap-1 md:hidden">
-            <button id="mobile-menu-btn" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
+            <button id="mobile-menu-btn"
+                    class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors"
+                    aria-label="menu">
               <i data-lucide="menu" class="w-[18px] h-[18px] text-muted"></i>
             </button>
-            <button id="header-search-btn"
-                class="flex w-9 h-9 items-center justify-center rounded-full hover:bg-accent/10 transition-colors"
-                title="search" aria-label="search">
+            <button data-open-search
+                    class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors"
+                    title="search" aria-label="search">
               <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
             </button>
           </div>
 
           <a href="#/" data-link class="shrink-0 justify-self-center md:justify-self-auto">
-            <img src="assets/images/text_logo.png" alt="IRIS" class="h-6 md:h-7 w-auto object-contain">
+            <img src="assets/images/text_logo.png" alt="${storeConfig.name}" class="h-6 md:h-7 w-auto object-contain">
           </a>
 
           <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
 
-          <div class="flex items-center gap-2 justify-self-end">
-            <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="search">
+          <div class="flex items-center gap-1 justify-self-end">
+            <button data-open-search
+                    class="hidden md:flex w-9 h-9 shrink-0 items-center justify-center rounded-full hover:bg-black/5 transition-colors"
+                    title="search" aria-label="search">
               <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
             </button>
             ${userArea}
-            <a href="#/cart" data-link class="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group">
+            <a href="#/cart" data-link
+               class="relative w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group"
+               aria-label="cart">
               <i data-lucide="shopping-bag" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
-              <span id="cart-badge" class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+              <span id="cart-badge"
+                    class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
             </a>
           </div>
         </div>
+
         <div id="mobile-menu" class="md:hidden px-4 py-3">
           <nav class="flex flex-col gap-1">
             ${navLinks.map((l) => `
@@ -115,8 +123,11 @@ const Header = {
       await callbacks.onLogout?.();
     });
 
-    container.querySelector('#header-search-btn')?.addEventListener('click', () => {
-      callbacks.onOpenSearch?.();
+    container.querySelectorAll('[data-open-search]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setMenuOpen(false);
+        callbacks.onOpenSearch?.();
+      });
     });
 
     menuBtn?.addEventListener('click', () => {
