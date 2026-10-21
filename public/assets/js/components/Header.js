@@ -5,7 +5,6 @@ const Header = {
   render() {
     const user = auth.getCurrentUser();
     const loggedIn = auth.isLoggedIn();
-    const logoSrc = pickVariantSet(storeConfig.logoVariants, 'thumb') || storeConfig.logo;
     const navLinks = storeConfig.texts.nav;
 
     const navItems = navLinks.map((l) => `
