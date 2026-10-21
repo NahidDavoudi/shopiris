@@ -26,7 +26,7 @@ const Header = {
       <header class="bg-body/80 backdrop-blur-xl border-b border-border">
         <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
           <a href="#/" data-link class="shrink-0 flex items-center gap-2.5">
-            <img src="${logoSrc}" alt="${storeConfig.name}" class="h-9 w-9 object-contain">
+            <img src="assets/images/text_logo.png" alt="${storeConfig.name}" class="h-9 w-9 object-contain">
             <span class="font-display text-xl md:text-2xl text-body tracking-[0.15em] font-bold hidden md:inline" dir="ltr">${storeConfig.name}</span>
           </a>
           <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
