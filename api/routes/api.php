@@ -14,6 +14,8 @@ use App\Modules\Admin\AdminController;
 use App\Modules\Settings\SettingsController;
 use App\Modules\Attribute\AttributeController;
 use App\Modules\Variant\VariantController;
+use App\Modules\Search\SearchController;
+use App\Core\Middleware\SearchRateLimitMiddleware;
 
 $router->group([
     'middleware' => [LogMiddleware::class],
@@ -91,7 +93,12 @@ $router->group([
         $router->post('/cart/discount',            [CartController::class, 'discount']);
 
     });
-
+    
+    $router->group([
+        'middleware' => [SearchRateLimitMiddleware::class],
+    ], function ($router) {
+        $router->get('/api/v1/search', [SearchController::class, 'index']);
+    });
     // ═══════════════════════════════════════════════════════════════════════
     // ادمین
     // ═══════════════════════════════════════════════════════════════════════
