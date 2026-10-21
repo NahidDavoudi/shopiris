@@ -28,7 +28,14 @@ class Env
     }
     public static function get(string $key, mixed $default = null): mixed
     {
-        return $_ENV[$key] ?? getenv($key) ?? $default;
+        $value = $_ENV[$key] ?? getenv($key);
+
+        // اگر مقدار false، null یا رشته‌ی خالی برگشت → پیش‌فرض
+        if ($value === false || $value === null || $value === '') {
+            return $default;
+        }
+
+        return $value;
     }
 
     /** @throws \RuntimeException در محیط production اگر تنظیمات حیاتی ناامن باشد */
@@ -43,11 +50,16 @@ class Env
         $refresh = (string) self::get('REFRESH_SECRET', '');
 
         if (in_array($jwt, $weakSecrets, true) || strlen($jwt) < 32) {
-            throw new \RuntimeException('JWT_SECRET در محیط production باید حداقل ۳۲ کاراکتر و غیر پیش‌فرض باشد.');
+            throw new \RuntimeException('JWT_SECRET در محیط production باید حداقل ۳۲ کاراکتر (256-bit) و غیر پیش‌فرض باشد.');
         }
 
         if (in_array($refresh, $weakSecrets, true) || strlen($refresh) < 32) {
-            throw new \RuntimeException('REFRESH_SECRET در محیط production باید حداقل ۳۲ کاراکتر و غیر پیش‌فرض باشد.');
+            throw new \RuntimeException('REFRESH_SECRET در محیط production باید حداقل ۳۲ کاراکتر (256-bit) و غیر پیش‌فرض باشد.');
+        }
+
+        $uploadDir = self::get('UPLOAD_DIR');
+        if (!$uploadDir || !is_dir($uploadDir)) {
+            throw new \RuntimeException('UPLOAD_DIR در production باید تنظیم شده و خارج از webroot باشد.');
         }
     }
 }
