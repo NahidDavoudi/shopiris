@@ -94,12 +94,16 @@ const ProductInfo = {
     variantSetupIncomplete = false,
   } = {}) {
     const t = storeConfig.texts.product;
+    const w = storeConfig.texts.wishlist || {};
     const priceStr = formatPrice(price);
     const outOfStock = stock === 0;
     const desc = shortDescription;
     const fullDesc = escapeHtml(description);
     const safeName = escapeHtml(name);
     const purchaseBlocked = variantSetupIncomplete || outOfStock;
+
+    const addLabel = w.addToWishlist || 'Add to wishlist';
+    const removeLabel = w.removeFromWishlist || 'Remove from wishlist';
 
     const initialSelected = autoSelectVariants(variantAxes, variants);
     const axesHtml = variantAxes.length
@@ -119,7 +123,7 @@ const ProductInfo = {
                     class="wishlist-heart-btn mt-1 w-9 h-9 shrink-0 flex items-center justify-center rounded-full text-muted hover:bg-black/5 transition-colors disabled:opacity-50"
                     data-product-id="${productId}"
                     aria-pressed="false"
-                    aria-label="افزودن به ویش‌لیست">
+                    aria-label="${addLabel}">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                    class="pointer-events-none">
@@ -162,10 +166,16 @@ const ProductInfo = {
     const wishBtn = container.querySelector('#wishlist-toggle-btn');
     if (wishBtn) {
       const pid = wishBtn.dataset.productId;
+      const w = storeConfig.texts.wishlist || {};
+      const addLabel = w.addToWishlist || 'Add to wishlist';
+      const removeLabel = w.removeFromWishlist || 'Remove from wishlist';
+      const addedMsg = w.added || 'Added to wishlist';
+      const removedMsg = w.removed || 'Removed from wishlist';
+      const errorMsg = w.error || 'Could not update wishlist';
 
       const updateWishHeart = (active) => {
         wishBtn.setAttribute('aria-pressed', String(active));
-        wishBtn.setAttribute('aria-label', active ? 'حذف از ویش‌لیست' : 'افزودن به ویش‌لیست');
+        wishBtn.setAttribute('aria-label', active ? removeLabel : addLabel);
         wishBtn.classList.toggle('text-red-500', active);
         wishBtn.classList.toggle('text-muted', !active);
         const svg = wishBtn.querySelector('svg');
@@ -181,13 +191,9 @@ const ProductInfo = {
         try {
           const active = await api.wishlist.toggle(pid);
           updateWishHeart(active);
-          api.utils.toast(
-            active ? 'به ویش‌لیست اضافه شد' : 'از ویش‌لیست حذف شد',
-            'success',
-            1500,
-          );
+          api.utils.toast(active ? addedMsg : removedMsg, 'success', 1500);
         } catch (err) {
-          api.utils.toast(err?.message || 'خطا در بروزرسانی ویش‌لیست', 'error');
+          api.utils.toast(err?.message || errorMsg, 'error');
         } finally {
           wishBtn.disabled = false;
         }

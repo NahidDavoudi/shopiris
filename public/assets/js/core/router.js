@@ -9,22 +9,21 @@ const AUTH_ROUTES = new Set(['/checkout', '/payment', '/orders']);
 
 const ROUTES = [
   { path: '/', page: 'home', script: 'home', title: () => storeConfig.name },
-  { path: '/shop', page: 'shop', script: 'shop', title: () => `فروشگاه | ${storeConfig.name}` },
+  { path: '/shop', page: 'shop', script: 'shop', title: () => `Shop | ${storeConfig.name}` },
   { path: '/product', page: 'product', script: 'products', title: () => storeConfig.name },
-  { path: '/categories', page: 'categories', script: 'categories', title: () => `دسته‌بندی‌ها | ${storeConfig.name}` },
-  { path: '/cart', page: 'cart', script: 'cart', title: () => `سبد خرید | ${storeConfig.name}` },
-  { path: '/wishlist', page: 'wishlist', script: 'wishlist', title: () => `ویش‌لیست | ${storeConfig.name}` },
-  { path: '/checkout', page: 'checkout', script: 'checkout', title: () => `تکمیل سفارش | ${storeConfig.name}` },
-  { path: '/payment', page: 'payment', script: 'payment', title: () => `پرداخت | ${storeConfig.name}` },
-  { path: '/orders', page: 'orders', script: 'orders', title: () => `سفارشات | ${storeConfig.name}`, meta: () => '' },
-  { path: '/about', page: 'about', script: 'about', title: () => `درباره ما | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.about?.meta || '' },
-  { path: '/contact', page: 'contact', script: 'contact', title: () => `تماس با ما | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.contact?.meta || '' },
-  { path: '/terms', page: 'terms', script: 'terms', title: () => `قوانین و مقررات | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.terms?.meta || '' },
-  { path: '/privacy', page: 'privacy', script: 'privacy', title: () => `حریم خصوصی | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.privacy?.meta || '' },
-  { path: '/refund', page: 'refund', script: 'refund', title: () => `شرایط بازگشت وجه و لغو سفارش | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.refund?.meta || '' },
-  { path: '/faq', page: 'faq', script: 'faq', title: () => `سوالات متداول | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.faq?.meta || '' },
+  { path: '/categories', page: 'categories', script: 'categories', title: () => `Categories | ${storeConfig.name}` },
+  { path: '/cart', page: 'cart', script: 'cart', title: () => `Shopping Cart | ${storeConfig.name}` },
+  { path: '/wishlist', page: 'wishlist', script: 'wishlist', title: () => `Wishlist | ${storeConfig.name}` },
+  { path: '/checkout', page: 'checkout', script: 'checkout', title: () => `Checkout | ${storeConfig.name}` },
+  { path: '/payment', page: 'payment', script: 'payment', title: () => `Payment | ${storeConfig.name}` },
+  { path: '/orders', page: 'orders', script: 'orders', title: () => `My Orders | ${storeConfig.name}`, meta: () => '' },
+  { path: '/about', page: 'about', script: 'about', title: () => `About Us | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.about?.meta || '' },
+  { path: '/contact', page: 'contact', script: 'contact', title: () => `Contact Us | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.contact?.meta || '' },
+  { path: '/terms', page: 'terms', script: 'terms', title: () => `Terms & Conditions | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.terms?.meta || '' },
+  { path: '/privacy', page: 'privacy', script: 'privacy', title: () => `Privacy Policy | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.privacy?.meta || '' },
+  { path: '/refund', page: 'refund', script: 'refund', title: () => `Returns & Refunds | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.refund?.meta || '' },
+  { path: '/faq', page: 'faq', script: 'faq', title: () => `FAQ | ${storeConfig.name}`, meta: () => storeConfig.texts.legal?.faq?.meta || '' },
 ];
-
 const pageHandlers = new Map();
 let navigo = null;
 

@@ -111,7 +111,7 @@ const ProductCard = {
       });
     });
 
-    container.querySelectorAll('.card-wishlist-btn').forEach((btn) => {
+container.querySelectorAll('.card-wishlist-btn').forEach((btn) => {
   btn.addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -123,14 +123,15 @@ const ProductCard = {
     try {
       const active = await api.wishlist.toggle(id);
       syncWishlistButtons(id, active);
+      const w = storeConfig.texts.wishlist || {};
       api.utils.toast(
-        active ? 'به ویش‌لیست اضافه شد' : 'از ویش‌لیست حذف شد',
+        active ? (w.added || 'Added to wishlist') : (w.removed || 'Removed from wishlist'),
         'success',
         1500,
       );
       callbacks.onToggleWishlist?.(id, active);
     } catch (err) {
-      api.utils.toast(err?.message || 'خطا در بروزرسانی ویش‌لیست', 'error');
+      api.utils.toast(err?.message || 'Could not update wishlist', 'error');
     } finally {
       btn.disabled = false;
     }

@@ -141,7 +141,7 @@ export function createWishlistStore(http) {
     moveToCart: async (productId, variantId = null) => {
       if (!auth.isLoggedIn()) {
         if (typeof cartAdd !== 'function') {
-          throw new Error('انتقال به سبد در حالت مهمان در دسترس نیست.');
+          throw new Error('Move to cart is not available for guests.');
         }
         await cartAdd(productId, 1, variantId);
         const list = readRaw().filter((id) => id !== Number(productId));

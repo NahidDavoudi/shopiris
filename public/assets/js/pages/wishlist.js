@@ -32,10 +32,10 @@ function _renderItem(item) {
         <button type="button"
                 class="wishlist-remove-btn absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-muted hover:text-red-500 hover:bg-white shadow-sm transition-colors"
                 data-product-id="${id}"
-                aria-label="حذف از ویش‌لیست">
+                aria-label="Remove from wishlist">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
-        ${!inStock ? '<span class="absolute bottom-2 left-2 bg-black text-white text-[10px] px-2 py-0.5 rounded-full">ناموجود</span>' : ''}
+        ${!inStock ? '<span class="absolute bottom-2 left-2 bg-black text-white text-[10px] px-2 py-0.5 rounded-full">Out of stock</span>' : ''}
       </a>
       <h3 class="text-[13px] font-bold uppercase tracking-[0.12em] text-body leading-relaxed line-clamp-2 mb-1">
         <a href="${href}" data-link class="hover:opacity-70">${name}</a>
@@ -47,7 +47,7 @@ function _renderItem(item) {
               data-requires-variant="${requiresVariant ? '1' : '0'}"
               data-in-stock="${inStock ? '1' : '0'}"
               ${!inStock ? 'disabled' : ''}>
-        ${requiresVariant ? 'انتخاب گزینه و افزودن' : 'افزودن به سبد'}
+        ${requiresVariant ? 'Select options' : 'Add to cart'}
       </button>
     </div>`;
 }
@@ -65,7 +65,7 @@ async function _removeItem(productId) {
     await api.wishlist.remove(productId);
     await _loadWishlist();
   } catch (err) {
-    api.utils.toast(err?.message || 'خطا در حذف', 'error');
+    api.utils.toast(err?.message || 'Failed to remove item', 'error');
   }
 }
 
@@ -76,11 +76,11 @@ async function _moveToCart(productId, requiresVariant) {
   }
   try {
     await api.wishlist.moveToCart(productId, null);
-    api.utils.toast('به سبد خرید منتقل شد', 'success', 1800);
+    api.utils.toast('Moved to cart', 'success', 1800);
     window.loadCartCount?.();
     await _loadWishlist();
   } catch (err) {
-    api.utils.toast(err?.message || 'خطا در انتقال به سبد', 'error');
+    api.utils.toast(err?.message || 'Could not move to cart', 'error');
   }
 }
 
@@ -130,7 +130,7 @@ async function _loadWishlist() {
   } catch (err) {
     const loadEl = document.getElementById('wishlist-loading');
     if (loadEl) {
-      loadEl.innerHTML = `<p class="text-accent text-center">${escapeHtml(err?.message || 'خطا در بارگذاری')}</p>`;
+      loadEl.innerHTML = `<p class="text-accent text-center">${escapeHtml(err?.message || 'Failed to load wishlist')}</p>`;
     }
   }
 }
@@ -138,12 +138,12 @@ async function _loadWishlist() {
 Router.onEnter('wishlist', async function () {
   const clearBtn = DOM.reclone('wishlist-clear-btn');
   clearBtn?.addEventListener('click', async () => {
-    if (!confirm('ویش‌لیست خالی شود؟')) return;
+    if (!confirm('Clear your wishlist?')) return;
     try {
       await api.wishlist.clear();
       await _loadWishlist();
     } catch (err) {
-      api.utils.toast(err?.message || 'خطا', 'error');
+      api.utils.toast(err?.message || 'Failed to clear wishlist', 'error');
     }
   });
 
