@@ -12,6 +12,7 @@ use App\Core\Http\ExceptionHandler;
 $allowedOrigins = [
     'https://shopiris.ir',
     'https://www.shopiris.ir',
+    'https://iris.test'
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
