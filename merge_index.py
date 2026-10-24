@@ -8,13 +8,21 @@ Usage:
   python merge_index.py path/to/project --sql
   python merge_index.py path/to/project --exts php,js,py --max-symbols 6
   python merge_index.py path/to/project --no-deps --folders-only
+  python merge_index.py path/to/project --clean      # wipe old .txt first (INDEX.md kept)
 
 Output goes to a folder named "merged" next to this script (or --out):
   <project>.txt, <project>__app__Controllers.txt, ...   one file per directory
   INDEX.md                                               compact map of the project
 
-At the start of every run, old *.txt and INDEX.md inside the output folder are
-deleted (nothing else), so the result always matches the current project.
+Incremental mode (default): every run only writes the .txt file of each
+ directory it merges, overwriting duplicates - files produced by earlier
+merges of OTHER folders are kept untouched. Stale .txt files that belong to
+the currently merged project (folders renamed/deleted since the last run)
+are removed, so its own output always matches the current project.
+
+INDEX.md is NEVER deleted: every merged root gets its own section and
+re-merging the same root UPDATES that section in place instead of appending
+a duplicate. A small table of contents at the top lists all merged projects.
 Standard library only (Python 3.8+).
 """
 import argparse
@@ -424,6 +432,67 @@ def dir_label(d):
     return '(root)' if d == '.' else d
 
 
+# ------------------------------------------------------------------ INDEX upsert
+BLOCK_RX = re.compile(r'<!-- MERGE:BEGIN (.*?) -->\n(.*?)<!-- MERGE:END -->', re.S)
+ATTR_RX = re.compile(r'(\w+)="([^"]*)"')
+LEGACY_ROOT_RX = re.compile(r'(?m)^root: (.+)$')
+LEGACY_BASE_RX = re.compile(r'(?m)^# (.+?) — generated ')
+
+
+def parse_index(text):
+    """Existing INDEX.md -> dict {root: (attrs, body)}; keeps insertion order."""
+    blocks = {}
+    if not text.strip():
+        return blocks
+    matches = list(BLOCK_RX.finditer(text))
+    if matches:
+        for m in matches:
+            attrs = dict(ATTR_RX.findall(m.group(1)))
+            key = attrs.get('root') or '\x00blk%d' % len(blocks)
+            blocks[key] = (attrs, m.group(2).rstrip('\n') + '\n')
+    else:
+        # legacy INDEX.md written by an older version (single run, no markers)
+        m = LEGACY_ROOT_RX.search(text)
+        b = LEGACY_BASE_RX.search(text)
+        key = m.group(1).strip() if m else '\x00legacy'
+        blocks[key] = ({'root': key if m else '',
+                        'base': b.group(1).strip() if b else 'legacy',
+                        'updated': 'legacy'},
+                       text.rstrip('\n') + '\n')
+    return blocks
+
+
+def build_toc(blocks):
+    L = ['<!-- MERGE:TOC -->', f'# Merged INDEX — {len(blocks)} project(s)', '']
+    if blocks:
+        L += ['| project | root | updated |', '|---|---|---|']
+        for attrs, _body in blocks.values():
+            L.append(f"| {attrs.get('base', '?')} | `{attrs.get('root') or '?'}` | "
+                     f"{attrs.get('updated', '?')} |")
+    L.append('<!-- /MERGE:TOC -->')
+    return '\n'.join(L)
+
+
+def upsert_index(index_path, root, base, now, body):
+    """Insert/replace this run's section in INDEX.md.
+
+    Same root  -> its old section is replaced in place (updated, no duplicate).
+    New root   -> section appended at the end.
+    Returns (was_update, number_of_tracked_projects).
+    """
+    old = read_text(index_path) if os.path.exists(index_path) else ''
+    blocks = parse_index(old)
+    is_update = root in blocks
+    blocks[root] = ({'root': root, 'base': base, 'updated': now}, body)
+    parts = [build_toc(blocks)]
+    for attrs, b in blocks.values():
+        marker = ' '.join(f'{k}="{v}"' for k, v in attrs.items())
+        parts.append(f'<!-- MERGE:BEGIN {marker} -->\n{b}<!-- MERGE:END -->')
+    with open(index_path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('\n\n'.join(parts) + '\n')
+    return is_update, len(blocks)
+
+
 def main():
     ap = argparse.ArgumentParser(description='Merge source files per directory + compact INDEX.md')
     ap.add_argument('folder', nargs='?', help='project folder (asked interactively if omitted)')
@@ -434,6 +503,9 @@ def main():
     ap.add_argument('--no-deps', action='store_true', help='skip folder dependency analysis')
     ap.add_argument('--sql', action='store_true', help='add a tables -> files section')
     ap.add_argument('--folders-only', action='store_true', help='INDEX without per-file lines')
+    ap.add_argument('--clean', action='store_true',
+                    help='delete ALL old .txt files in the output folder before writing '
+                         '(INDEX.md is never deleted)')
     args = ap.parse_args()
 
     folder = args.folder if args.folder else input('Folder: ')
@@ -504,17 +576,19 @@ def main():
         schema_tables.update(t.lower() for t in SQL_CREATE.findall(read_text(p)))
     pkgs = read_manifests(root, manifests)
 
-    # ---- write merged txt files
+    # ---- write merged txt files (incremental: keep other merges, overwrite dupes)
     os.makedirs(out_dir, exist_ok=True)
-    for name in os.listdir(out_dir):
-        if name.endswith('.txt') or name == 'INDEX.md':
-            try:
-                os.remove(os.path.join(out_dir, name))
-            except OSError:
-                pass
+    if args.clean:
+        for name in os.listdir(out_dir):
+            if name.endswith('.txt'):
+                try:
+                    os.remove(os.path.join(out_dir, name))
+                except OSError:
+                    pass
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     info = {}
+    written, overwritten, stale = [], 0, []
     for d in dirs:
         group = sorted(by_dir[d], key=lambda f: f['rel'].lower())
         name = txt_name(base, d)
@@ -526,12 +600,28 @@ def main():
                 parts.append('\n')
             parts.append('\n\n')
         content = ''.join(parts)
-        with open(os.path.join(out_dir, name), 'w', encoding='utf-8', newline='\n') as out:
+        out_path = os.path.join(out_dir, name)
+        if os.path.exists(out_path):
+            overwritten += 1
+        with open(out_path, 'w', encoding='utf-8', newline='\n') as out:
             out.write(content)
+        written.append(name)
         info[d] = {'name': name, 'tokens': len(content) // 4, 'files': group,
                    'lines': sum(f['lines'] for f in group)}
 
-    # ---- write INDEX.md
+    # drop stale .txt files of THIS project (folders renamed/deleted since last run);
+    # files of other merged projects (different name prefix) are never touched
+    safe_base = re.sub(r'[<>:"|?*\\/]', '_', base)
+    for name in os.listdir(out_dir):
+        if (name.endswith('.txt') and name not in written
+                and (name == safe_base + '.txt' or name.startswith(safe_base + '__'))):
+            try:
+                os.remove(os.path.join(out_dir, name))
+                stale.append(name)
+            except OSError:
+                pass
+
+    # ---- write INDEX.md (upsert: update this project's section, keep the rest)
     total_files = len(files)
     total_lines = sum(i['lines'] for i in info.values())
     total_tokens = sum(i['tokens'] for i in info.values())
@@ -597,10 +687,16 @@ def main():
             L.append('in schema but not referenced in code: ' + ', '.join(unused))
         L.append('')
 
-    with open(os.path.join(out_dir, 'INDEX.md'), 'w', encoding='utf-8', newline='\n') as f:
-        f.write('\n'.join(L).rstrip() + '\n')
+    body = '\n'.join(L).rstrip() + '\n'
+    updated, n_projects = upsert_index(os.path.join(out_dir, 'INDEX.md'), root, base, now, body)
 
-    print(f'[✓] {len(dirs)} merged file(s) + INDEX.md -> {out_dir}')
+    print(f'[✓] {len(dirs)} merged file(s) -> {out_dir} | '
+          f'{overwritten} overwritten | {len(stale)} stale removed')
+    if stale:
+        more = f' +{len(stale) - 8}' if len(stale) > 8 else ''
+        print('    stale: ' + ', '.join(stale[:8]) + more)
+    print(f'    INDEX.md: section "{base}" {"updated" if updated else "added"} '
+          f'| {n_projects} project(s) tracked')
     print(f'    {total_files} files | {total_lines:,} lines | {fmt_tok(total_tokens)}')
 
 
