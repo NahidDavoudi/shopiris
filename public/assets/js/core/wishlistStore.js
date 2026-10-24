@@ -47,8 +47,6 @@ function normalizeGuestItem(product) {
 export function createWishlistStore(http) {
   const { get, post, del, withFallback, fetchProduct, cartAdd } = http;
 
-  let _syncStarted = false;
-
   async function getGuestWishlist() {
     const ids = readRaw();
     if (!ids.length) return { id: null, items: [], count: 0 };
@@ -77,7 +75,8 @@ export function createWishlistStore(http) {
     writeRaw(items.map((i) => Number(i.product_id)));
   }
 
-  return {
+  // ─── Store object — NOTE: use `store.xxx()` inside methods (not `this.xxx`) ──
+  const store = {
     // ─── Sync helpers (for render-time) ─────────────────────
     list: () => readRaw(),
     has: (id) => readRaw().includes(Number(id)),
@@ -123,10 +122,10 @@ export function createWishlistStore(http) {
     toggle: async (productId) => {
       const isIn = readRaw().includes(Number(productId));
       if (isIn) {
-        await this.remove(productId);
+        await store.remove(productId);
         return false;
       }
-      await this.add(productId);
+      await store.add(productId);
       return true;
     },
 
@@ -169,21 +168,9 @@ export function createWishlistStore(http) {
       }
       return res;
     },
-
-    syncFromServer: async () => {
-      if (!auth.isLoggedIn()) return null;
-      if (_syncStarted) return null;
-      _syncStarted = true;
-      try {
-        const data = await withFallback(get('/wishlist'), { id: null, items: [], count: 0 });
-        cacheFromServerWishlist(data);
-        return data;
-      } catch {
-        _syncStarted = false;
-        return null;
-      }
-    },
   };
+
+  return store;
 }
 
 export default createWishlistStore;
