@@ -84,6 +84,7 @@ Router.onEnter('products', async function (params) {
     const infoWrap = document.getElementById('product-info-wrap');
     if (infoWrap) {
       infoWrap.innerHTML = ProductInfo.render({
+        productId: p.id,   // ← اضافه
         name: p.name,
         price: displayPrice,
         description: p.description,

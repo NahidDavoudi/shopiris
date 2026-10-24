@@ -1,5 +1,6 @@
 import { storeConfig } from '../config/bootstrap.js';
 import auth from '../core/auth.js';
+import api from '../core/api.js';
 
 const Header = {
   render() {
@@ -51,6 +52,13 @@ const Header = {
               <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
             </button>
             ${userArea}
+            <a href="#/wishlist" data-link
+               class="relative w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group"
+               aria-label="wishlist">
+              <i data-lucide="heart" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
+              <span id="wishlist-badge"
+                    class="hidden absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+            </a>
             <a href="#/cart" data-link
                class="relative w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group"
                aria-label="cart">
@@ -84,6 +92,23 @@ const Header = {
     const menuBtn = container.querySelector('#mobile-menu-btn');
     const menu = container.querySelector('#mobile-menu');
     const backdrop = container.querySelector('#mobile-menu-backdrop');
+
+    // ─── Wishlist badge ───────────────────────────────────────
+    function updateWishlistBadge() {
+      const badge = container.querySelector('#wishlist-badge');
+      if (!badge) return;
+      const count = api.wishlist.count();
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : String(count);
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // مقدار اولیه از localStorage — بعد از merge در app.js با رویداد wishlist:change آپدیت می‌شود
+    updateWishlistBadge();
+    window.addEventListener('wishlist:change', updateWishlistBadge);
 
     function setMenuOpen(open) {
       menu?.classList.toggle('open', open);

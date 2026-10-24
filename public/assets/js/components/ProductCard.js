@@ -5,7 +5,6 @@ import { escapeHtml } from '../utils/htmlEscape.js';
 import DOM from '../utils/dom.js';
 import api from '../core/api.js';
 import Router from '../core/router.js';
-import wishlistStore from '../core/wishlistStore.js';
 import { productRequiresVariantSelection, quickAddNeedsProductPage } from '../utils/variantHelpers.js';
 
 function syncWishlistButtons(id, active) {
@@ -42,8 +41,7 @@ const ProductCard = {
     const subtitle = escapeHtml(p.short_description || p.category_name || '');
     const needsVariant = productRequiresVariantSelection(p);
     const outOfStock = Number(p.stock) === 0;
-    const wished = wishlistStore.has(p.id);
-
+    const wished = api.wishlist.has(p.id);
     const image = img
       ? renderImageWithFallback({
         src: img,
@@ -114,16 +112,30 @@ const ProductCard = {
     });
 
     container.querySelectorAll('.card-wishlist-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = btn.dataset.productId;
-        if (!id) return;
-        const active = wishlistStore.toggle(id);
-        syncWishlistButtons(id, active);
-        callbacks.onToggleWishlist?.(id, active);
-      });
-    });
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (btn.disabled) return;
+    const id = btn.dataset.productId;
+    if (!id) return;
+
+    btn.disabled = true;
+    try {
+      const active = await api.wishlist.toggle(id);
+      syncWishlistButtons(id, active);
+      api.utils.toast(
+        active ? 'به ویش‌لیست اضافه شد' : 'از ویش‌لیست حذف شد',
+        'success',
+        1500,
+      );
+      callbacks.onToggleWishlist?.(id, active);
+    } catch (err) {
+      api.utils.toast(err?.message || 'خطا در بروزرسانی ویش‌لیست', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
   },
 };
 

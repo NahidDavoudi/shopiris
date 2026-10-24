@@ -5,7 +5,7 @@ import * as auth from './auth.js';
 import { createCartStore } from './cartStore.js';
 import { formatPrice, attachPriceFormatter } from '../utils/priceFormatter.js';
 import { toast } from '../utils/helpers.js';
-
+import { createWishlistStore } from './wishlistStore.js';
 const CFG = () => window.AppConfig || {};
 const API = () => CFG().api || {};
 const MSG = () => CFG().messages || {};
@@ -262,12 +262,26 @@ function getCartStore() {
   }
   return cartStore;
 }
+let wishlistStore = null;
+
+function getWishlistStore() {
+  if (!wishlistStore) {
+    wishlistStore = createWishlistStore({
+      get,
+      post,
+      del,
+      withFallback,
+      fetchProduct: (id) => get(`/products/${id}`),
+      cartAdd: (id, qty, vid) => getCartStore().add(id, qty, vid),
+    });
+  }
+  return wishlistStore;
+}
 
 async function afterAuthSession(data) {
   auth.persistSession(data);
-  try {
-    await getCartStore().mergeGuestIfNeeded();
-  } catch (_) { /* merge failure should not block login */ }
+  try { await getCartStore().mergeGuestIfNeeded(); } catch (_) { /* noop */ }
+  try { await getWishlistStore().mergeGuestIfNeeded(); } catch (_) { /* noop */ }
   return data;
 }
 
@@ -415,7 +429,19 @@ const cart = {
   applyDiscount: (code) => getCartStore().applyDiscount(code),
   mergeGuestIfNeeded: () => getCartStore().mergeGuestIfNeeded(),
 };
-
+const wishlist = {
+  get: () => getWishlistStore().get(),
+  list: () => getWishlistStore().list(),
+  has: (id) => getWishlistStore().has(id),
+  count: () => getWishlistStore().count(),
+  add: (id) => getWishlistStore().add(id),
+  remove: (id) => getWishlistStore().remove(id),
+  toggle: (id) => getWishlistStore().toggle(id),
+  clear: () => getWishlistStore().clear(),
+  moveToCart: (id, variantId) => getWishlistStore().moveToCart(id, variantId),
+  mergeGuestIfNeeded: () => getWishlistStore().mergeGuestIfNeeded(),
+  syncFromServer: () => getWishlistStore().syncFromServer(),
+};
 const orders = {
   place: (data) => post('/orders', data),
   create: (data) => post('/orders', data),
@@ -472,6 +498,7 @@ const api = {
   search,
   categories,
   cart,
+  wishlist,
   orders,
   discounts,
   dashboard,

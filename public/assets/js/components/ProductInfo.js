@@ -1,3 +1,4 @@
+import api from '../core/api.js';
 import { storeConfig } from '../config/bootstrap.js';
 import { formatPrice } from '../utils/priceFormatter.js';
 import { escapeHtml, escapeAttr } from '../utils/htmlEscape.js';
@@ -82,6 +83,7 @@ function setButtonActiveState(btn, active) {
 
 const ProductInfo = {
   render({
+    productId = null,
     name = '',
     price = 0,
     description = '',
@@ -94,8 +96,7 @@ const ProductInfo = {
     const t = storeConfig.texts.product;
     const priceStr = formatPrice(price);
     const outOfStock = stock === 0;
-    const desc = (shortDescription);
-    console.log(desc);
+    const desc = shortDescription;
     const fullDesc = escapeHtml(description);
     const safeName = escapeHtml(name);
     const purchaseBlocked = variantSetupIncomplete || outOfStock;
@@ -111,7 +112,21 @@ const ProductInfo = {
 
     return `
       <div class="product-info max-w-xl mx-auto px-4 font-display">
-        <h1 class="text-lg md:text-2xl font-bold uppercase tracking-[0.25em] text-body leading-relaxed">${safeName}</h1>
+        <div class="flex items-start justify-between gap-3">
+          <h1 class="text-lg md:text-2xl font-bold uppercase tracking-[0.25em] text-body leading-relaxed flex-1">${safeName}</h1>
+          ${productId ? `
+            <button type="button" id="wishlist-toggle-btn"
+                    class="wishlist-heart-btn mt-1 w-9 h-9 shrink-0 flex items-center justify-center rounded-full text-muted hover:bg-black/5 transition-colors disabled:opacity-50"
+                    data-product-id="${productId}"
+                    aria-pressed="false"
+                    aria-label="افزودن به ویش‌لیست">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   class="pointer-events-none">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>` : ''}
+        </div>
         <p class="mt-2 text-sm font-light uppercase tracking-[0.15em] text-muted">${desc}</p>
 
         ${axesHtml ? `<div id="product-variant-selectors" class="mt-8">${axesHtml}</div>` : ''}
@@ -143,6 +158,43 @@ const ProductInfo = {
       variantSetupIncomplete = false,
     } = callbacks;
 
+    // ─── Wishlist heart ──────────────────────────────────────
+    const wishBtn = container.querySelector('#wishlist-toggle-btn');
+    if (wishBtn) {
+      const pid = wishBtn.dataset.productId;
+
+      const updateWishHeart = (active) => {
+        wishBtn.setAttribute('aria-pressed', String(active));
+        wishBtn.setAttribute('aria-label', active ? 'حذف از ویش‌لیست' : 'افزودن به ویش‌لیست');
+        wishBtn.classList.toggle('text-red-500', active);
+        wishBtn.classList.toggle('text-muted', !active);
+        const svg = wishBtn.querySelector('svg');
+        if (svg) svg.setAttribute('fill', active ? 'currentColor' : 'none');
+      };
+
+      updateWishHeart(api.wishlist.has(pid));
+
+      wishBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (wishBtn.disabled) return;
+        wishBtn.disabled = true;
+        try {
+          const active = await api.wishlist.toggle(pid);
+          updateWishHeart(active);
+          api.utils.toast(
+            active ? 'به ویش‌لیست اضافه شد' : 'از ویش‌لیست حذف شد',
+            'success',
+            1500,
+          );
+        } catch (err) {
+          api.utils.toast(err?.message || 'خطا در بروزرسانی ویش‌لیست', 'error');
+        } finally {
+          wishBtn.disabled = false;
+        }
+      });
+    }
+
+    // ─── Variant selectors ───────────────────────────────────
     const selected = autoSelectVariants(variantAxes, variants);
     let maxQty = callbacks.maxQty || 99;
 

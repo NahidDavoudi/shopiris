@@ -15,6 +15,7 @@ import ProductCard from './components/ProductCard.js';
 import { quickAddNeedsProductPage } from './utils/variantHelpers.js';
 import SearchOverlay from './components/SearchOverlay.js';
 
+import './pages/wishlist.js';
 import './pages/home.js';
 import './pages/shop.js';
 import './pages/product.js';
@@ -83,7 +84,7 @@ function mountShell() {
     });
   }
 
-  // Search overlay — mount مستقل از header (برای ز-index بالاتر و کنترل کامل)
+  // Search overlay — mount مستقل از header
   const searchEl = document.getElementById('app-search-overlay');
   if (searchEl) {
     searchEl.innerHTML = SearchOverlay.render();
@@ -100,7 +101,6 @@ function mountShell() {
 // میانبر Ctrl/Cmd + K برای باز کردن جستجو
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-    // اگر کاربر در حال تایپ در input/textarea است، مداخله نکن
     const tag = (e.target?.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
     e.preventDefault();
@@ -145,11 +145,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadStoreSettings(api);
   initTheme();
   mountShell();
+
+  // ─── Session init: merge guest data → server ─────────────
   if (api.auth.isLoggedIn()) {
-    try {
-      await api.cart.mergeGuestIfNeeded();
-    } catch (_) { /* noop */ }
+    try { await api.cart.mergeGuestIfNeeded(); } catch (_) { /* noop */ }
+    try { await api.wishlist.mergeGuestIfNeeded(); } catch (_) { /* noop */ }
   }
+
   loadCartCount();
   Router.init();
 });

@@ -13,6 +13,7 @@ const ROUTES = [
   { path: '/product', page: 'product', script: 'products', title: () => storeConfig.name },
   { path: '/categories', page: 'categories', script: 'categories', title: () => `دسته‌بندی‌ها | ${storeConfig.name}` },
   { path: '/cart', page: 'cart', script: 'cart', title: () => `سبد خرید | ${storeConfig.name}` },
+  { path: '/wishlist', page: 'wishlist', script: 'wishlist', title: () => `ویش‌لیست | ${storeConfig.name}` },
   { path: '/checkout', page: 'checkout', script: 'checkout', title: () => `تکمیل سفارش | ${storeConfig.name}` },
   { path: '/payment', page: 'payment', script: 'payment', title: () => `پرداخت | ${storeConfig.name}` },
   { path: '/orders', page: 'orders', script: 'orders', title: () => `سفارشات | ${storeConfig.name}`, meta: () => '' },
