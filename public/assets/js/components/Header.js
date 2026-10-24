@@ -57,7 +57,7 @@ const Header = {
                aria-label="wishlist">
               <i data-lucide="heart" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
               <span id="wishlist-badge"
-                    class="hidden absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                    class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
             </a>
             <a href="#/cart" data-link
                class="relative w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors group"
