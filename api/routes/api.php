@@ -9,6 +9,7 @@ use App\Modules\Product\ProductController;
 use App\Modules\Category\CategoryController;
 use App\Modules\Order\OrderController;
 use App\Modules\Cart\CartController;
+use App\Modules\Wishlist\WishlistController;
 use App\Modules\Discount\DiscountController;
 use App\Modules\Admin\AdminController;
 use App\Modules\Settings\SettingsController;
@@ -91,6 +92,15 @@ $router->group([
         $router->delete('/cart/items/{productId}', [CartController::class, 'remove']);
         $router->delete('/cart/items/variant/{variantId}', [CartController::class, 'remove']);
         $router->post('/cart/discount',            [CartController::class, 'discount']);
+
+        // Wishlist
+        $router->get('/wishlist',                                 [WishlistController::class, 'index']);
+        $router->get('/wishlist/check/{productId}',               [WishlistController::class, 'check']);
+        $router->post('/wishlist/items',                          [WishlistController::class, 'add']);
+        $router->post('/wishlist/merge',                          [WishlistController::class, 'merge']);
+        $router->post('/wishlist/items/{productId}/move-to-cart', [WishlistController::class, 'moveToCart']);
+        $router->delete('/wishlist/items/{productId}',            [WishlistController::class, 'remove']);
+        $router->delete('/wishlist',                              [WishlistController::class, 'clear']);
 
     });
     
