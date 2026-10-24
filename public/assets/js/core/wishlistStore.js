@@ -23,24 +23,43 @@ function writeRaw(list) {
 }
 
 function normalizeGuestItem(product) {
-  const mainImage = product.main_image
-    || product.images?.find((i) => i.is_main)?.url
-    || product.images?.[0]?.url
+  const imgs = Array.isArray(product.images) ? product.images : [];
+  const mainImg = imgs.find((i) => i.is_main === 1 || i.is_main === true) || imgs[0] || null;
+
+  const image = product.main_image
+    || mainImg?.url
+    || mainImg?.image_url
+    || product.image
     || '';
+
+  const price = Number(
+    product.sale_price
+    ?? product.price
+    ?? product.default_variant?.sale_price
+    ?? product.default_variant?.price
+    ?? 0,
+  );
+
+  const stock = Number(
+    product.stock
+    ?? product.default_variant?.inventory?.quantity
+    ?? 0,
+  );
+
   return {
     product_id: Number(product.id),
     name: product.name || '',
     product_slug: product.slug || '',
-    image: mainImage,
-    price: Number(product.sale_price ?? product.price ?? 0),
-    stock: Number(product.stock ?? 0),
-    in_stock: Number(product.stock ?? 0) > 0,
+    image,
+    price,
+    stock,
+    in_stock: stock > 0,
     requires_variant:
       product.product_type === 'variable'
       || !!product.variant_setup_incomplete
       || (product.variant_axes?.length || 0) > 0,
     is_active: product.is_active !== 0 && product.is_active !== false,
-    default_variant_id: product.default_variant_id ?? null,
+    default_variant_id: product.default_variant_id ?? product.default_variant?.id ?? null,
   };
 }
 
