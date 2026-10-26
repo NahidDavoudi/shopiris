@@ -38,7 +38,7 @@ const Header = {
           </div>
           <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
 
-          <!-- وسط: لوگو (در موبایل کاملاً وسط‌چین می‌شود) -->
+          <!-- وسط: لوگو -->
           <a href="#/" data-link class="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:justify-self-start">
             <img src="assets/images/text_logo.png" alt="${storeConfig.name}" class="h-5 md:h-7 w-auto object-contain">
           </a>
@@ -55,7 +55,7 @@ const Header = {
             <!-- دسکتاپ: کاربر -->
             <div class="hidden md:block">${desktopUserArea}</div>
 
-            <!-- موبایل: آیکون کاربر (مشابه عکس) -->
+            <!-- موبایل: آیکون کاربر -->
             <a href="${loggedIn ? '#/profile' : 'login.html'}" class="md:hidden w-10 h-10 -mr-2 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
               <i data-lucide="user" class="w-5 h-5 text-body"></i>
             </a>
@@ -71,8 +71,8 @@ const Header = {
           </div>
         </div>
 
-        <!-- منوی کشویی موبایل -->
-        <div id="mobile-menu" class="md:hidden px-4 py-4 absolute top-16 left-0 right-0 bg-white border-b border-black/5 shadow-xl">
+        <!-- منوی کشویی موبایل (اضافه شدن hidden در اینجا مشکل باز نشدن را حل می‌کند) -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 py-4 absolute top-16 left-0 right-0 bg-white border-b border-black/5 shadow-xl">
           
           <!-- گزینه سرچ داخل منو -->
           <button data-open-search class="w-full flex items-center gap-3 px-4 py-3 bg-surface rounded-xl text-muted mb-4 transition-colors hover:bg-black/5">
@@ -88,8 +88,15 @@ const Header = {
               </a>`).join('')}
           </nav>
 
-          <!-- بخش پایینی منو: سبد خرید و لاگین/لاگ‌اوت -->
+          <!-- بخش پایینی منو: ویش‌لیست، سبد خرید و لاگین/لاگ‌اوت -->
           <div class="border-t border-black/5 pt-4 flex flex-col gap-1">
+            
+            <!-- گزینه ویش‌لیست که اضافه شد -->
+            <a href="#/wishlist" data-link class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
+              <i data-lucide="heart" class="w-4 h-4"></i> 
+              <span>Wishlist</span>
+            </a>
+
             <a href="#/cart" data-link class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
               <i data-lucide="shopping-bag" class="w-4 h-4"></i> 
               <span>Cart</span>
@@ -158,7 +165,7 @@ const Header = {
       await callbacks.onLogout?.();
     });
 
-    // باز کردن سرچ (هم از دسکتاپ و هم از داخل منوی موبایل)
+    // باز کردن سرچ
     container.querySelectorAll('[data-open-search]').forEach((btn) => {
       btn.addEventListener('click', () => {
         setMenuOpen(false);
@@ -166,9 +173,10 @@ const Header = {
       });
     });
 
-    // دکمه همبرگر
+    // دکمه همبرگر (اصلاح منطق)
     menuBtn?.addEventListener('click', () => {
-      setMenuOpen(menu?.classList.contains('hidden'));
+      const isHidden = menu?.classList.contains('hidden');
+      setMenuOpen(isHidden);
     });
 
     // بستن منو با کلیک روی بک‌دراپ
