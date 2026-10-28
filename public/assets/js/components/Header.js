@@ -1,196 +1,216 @@
 import { storeConfig } from '../config/bootstrap.js';
 import auth from '../core/auth.js';
 
+/**
+ * Header — مینیمال (موبایل + دسکتاپ یکسان)
+ * ساختار نوار: [همبرگری] — [لوگو وسط] — [آیکون کاربر]
+ *
+ * نکته مهم درباره‌ی bind:
+ * به‌جای اتصال listener به تک‌تک المان‌ها (که اگر bind چند بار صدا زده شود
+ * روی هم انبار می‌شوند و یک کلیک = چند toggle = باز و بسته شدن فوری منو)،
+ * همه‌ی رویدادها یک‌بار و به‌صورت delegated روی document وصل می‌شوند.
+ * المان‌ها در لحظه‌ی کلیک از DOM خوانده می‌شوند، پس re-render شدن هدر هم
+ * مشکلی ایجاد نمی‌کند. گارد ۲۵۰ میلی‌ثانیه‌ای هم جلوی دابل‌کلیک/رویداد
+ * تکراری روی دکمه‌ی تاگل را می‌گیرد.
+ */
+let _docBound = false;
+let _lastToggleAt = 0;
+
 const Header = {
+  _callbacks: {},
+
   render() {
     const user = auth.getCurrentUser();
     const loggedIn = auth.isLoggedIn();
     const navLinks = storeConfig.texts.nav;
 
-    // منوی دسکتاپ
-    const navItems = navLinks.map((l) => `
-      <a href="${l.href}" data-link
-         class="text-sm text-dim hover:text-body transition-colors px-2 py-1 rounded-full hover:bg-black/5 header-nav-link">
-        ${l.label}
-      </a>`).join('');
-
-    // بخش کاربر در دسکتاپ
-    const desktopUserArea = loggedIn
-      ? `<div class="flex items-center gap-2">
-           <span class="text-xs text-muted hidden sm:inline">${user?.name || user?.phone || ''}</span>
-           <button id="header-logout-btn" class="text-xs text-muted hover:text-body transition-colors">logout</button>
-         </div>`
-      : `<a href="login.html" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors" title="login" aria-label="login">
+    // آیکون کاربر سمت مقابل همبرگری — مثل تصویر مرجع
+    // لاگین‌شده: منوی اکانت را باز می‌کند | مهمان: صفحه لاگین
+    const accountAction = loggedIn
+      ? `<button type="button" id="header-account-btn"
+                 class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors justify-self-end"
+                 title="account" aria-label="account" aria-haspopup="true" aria-controls="mobile-menu">
+           <i data-lucide="user" class="w-[18px] h-[18px] text-muted"></i>
+         </button>`
+      : `<a href="login.html"
+            class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors justify-self-end"
+            title="login" aria-label="login">
            <i data-lucide="user" class="w-[18px] h-[18px] text-muted"></i>
          </a>`;
 
+    const userRow = loggedIn && (user?.name || user?.phone)
+      ? `
+                <div class="flex items-center gap-2 px-4 py-1.5 text-xs text-muted">
+                  <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                  <span>${user?.name || user?.phone}</span>
+                </div>`
+      : '';
+
     return `
       <header class="fixed top-0 left-0 right-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-black/5">
-        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between md:grid md:grid-cols-3">
-          
-          <!-- چپ: منو در موبایل / لینک‌ها در دسکتاپ -->
-          <div class="flex items-center md:hidden">
-            <button id="mobile-menu-btn"
-                    class="w-10 h-10 -ml-2 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors"
-                    aria-label="menu">
-              <i data-lucide="menu" class="w-6 h-6 text-body"></i>
-            </button>
-          </div>
-          <nav class="hidden md:flex items-center gap-1">${navItems}</nav>
-
-          <!-- وسط: لوگو -->
-          <a href="#/" data-link class="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:justify-self-start">
-            <img src="assets/images/text_logo.png" alt="${storeConfig.name}" class="h-5 md:h-7 w-auto object-contain">
-          </a>
-
-          <!-- راست: آیکون کاربر در موبایل / سرچ و سبد خرید در دسکتاپ -->
-          <div class="flex items-center justify-end gap-1">
-            <!-- دسکتاپ: سرچ -->
-            <button data-open-search
-                    class="hidden md:flex w-9 h-9 shrink-0 items-center justify-center rounded-full hover:bg-black/5 transition-colors"
-                    title="search" aria-label="search">
-              <i data-lucide="search" class="w-[18px] h-[18px] text-muted"></i>
-            </button>
-            
-            <!-- دسکتاپ: کاربر -->
-            <div class="hidden md:block">${desktopUserArea}</div>
-
-            <!-- موبایل: آیکون کاربر -->
-            <a href="${loggedIn ? '#/profile' : 'login.html'}" class="md:hidden w-10 h-10 -mr-2 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
-              <i data-lucide="user" class="w-5 h-5 text-body"></i>
-            </a>
-
-            <!-- دسکتاپ: سبد خرید -->
-            <a href="#/cart" data-link
-               class="hidden md:flex relative w-9 h-9 shrink-0 items-center justify-center rounded-full hover:bg-black/5 transition-colors group"
-               aria-label="cart">
-              <i data-lucide="shopping-bag" class="w-[18px] h-[18px] text-muted group-hover:text-body transition-colors"></i>
-              <span id="cart-badge"
-                    class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- منوی کشویی موبایل (اضافه شدن hidden در اینجا مشکل باز نشدن را حل می‌کند) -->
-        <div id="mobile-menu" class="hidden md:hidden px-4 py-4 absolute top-16 left-0 right-0 bg-white border-b border-black/5 shadow-xl">
-          
-          <!-- گزینه سرچ داخل منو -->
-          <button data-open-search class="w-full flex items-center gap-3 px-4 py-3 bg-surface rounded-xl text-muted mb-4 transition-colors hover:bg-black/5">
-            <i data-lucide="search" class="w-4 h-4"></i>
-            <span class="text-sm">Search products...</span>
+        <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-16 grid grid-cols-[1fr_auto_1fr] items-center">
+          <button id="mobile-menu-btn"
+                  class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors justify-self-start"
+                  aria-label="menu" aria-controls="mobile-menu" aria-expanded="false">
+            <i data-lucide="menu" class="w-[18px] h-[18px] text-muted"></i>
           </button>
 
-          <!-- دسته‌بندی‌ها (منوها) -->
-          <nav class="flex flex-col gap-1 mb-4">
-            ${navLinks.map((l) => `
-              <a href="${l.href}" data-link class="mobile-nav-item py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
-                ${l.label}
-              </a>`).join('')}
-          </nav>
+          <a href="#/" data-link class="shrink-0 justify-self-center" aria-label="${storeConfig.name}">
+            <img src="assets/images/text_logo.png" alt="${storeConfig.name}" class="h-7 w-auto object-contain">
+          </a>
 
-          <!-- بخش پایینی منو: ویش‌لیست، سبد خرید و لاگین/لاگ‌اوت -->
-          <div class="border-t border-black/5 pt-4 flex flex-col gap-1">
-            
-            <!-- گزینه ویش‌لیست که اضافه شد -->
-            <a href="#/wishlist" data-link class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
-              <i data-lucide="heart" class="w-4 h-4"></i> 
-              <span>Wishlist</span>
-            </a>
+          ${accountAction}
+        </div>
 
-            <a href="#/cart" data-link class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
-              <i data-lucide="shopping-bag" class="w-4 h-4"></i> 
-              <span>Cart</span>
-            </a>
-            
-            ${loggedIn ? `
-              <button id="mobile-logout-btn" class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body text-left">
-                <i data-lucide="log-out" class="w-4 h-4"></i> 
-                <span>Logout</span>
-              </button>` : `
-              <a href="login.html" class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-black/5 text-sm font-medium text-body">
-                <i data-lucide="user" class="w-4 h-4"></i> 
-                <span>Login</span>
-              </a>`}
+        <div id="mobile-menu" class="hidden border-t border-black/5 bg-white/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-4">
+            <div class="flex flex-col gap-1 md:max-w-sm">
+
+              <button data-open-search type="button"
+                      class="flex items-center justify-between gap-3 w-full px-4 py-3 rounded-xl bg-surface/60 border border-black/5 text-sm text-muted hover:text-body hover:border-black/10 transition-colors">
+                <span class="flex items-center gap-2.5">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                  <span>Search</span>
+                </span>
+                <i data-lucide="chevron-left" class="w-4 h-4 opacity-40"></i>
+              </button>
+
+              <nav class="flex flex-col gap-1 pt-1">
+                ${navLinks.map((l) => `
+                  <a href="${l.href}" data-link
+                     class="mobile-nav-item px-4 py-3 rounded-xl text-sm text-body hover:bg-black/5 transition-colors">${l.label}</a>`).join('')}
+              </nav>
+
+              <a href="#/cart" data-link
+                 class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm text-body hover:bg-black/5 transition-colors">
+                <span class="flex items-center gap-2.5">
+                  <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                  <span>Cart</span>
+                </span>
+                <span id="cart-badge"
+                      class="hidden min-w-4 h-4 px-1 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+              </a>
+
+              <div class="border-t border-black/5 mt-2 pt-2 flex flex-col gap-1">
+                ${loggedIn ? `
+                ${userRow}
+                <button id="mobile-logout-btn" type="button"
+                        class="flex items-center justify-between gap-3 w-full px-4 py-3 rounded-xl text-sm text-body hover:bg-black/5 transition-colors">
+                  <span>logout</span>
+                  <i data-lucide="log-out" class="w-4 h-4 text-muted"></i>
+                </button>` : `
+                <a href="login.html"
+                   class="flex items-center justify-between gap-3 w-full px-4 py-3 rounded-xl text-sm text-body hover:bg-black/5 transition-colors">
+                  <span>login</span>
+                  <i data-lucide="user" class="w-4 h-4 text-muted"></i>
+                </a>`}
+              </div>
+
+            </div>
           </div>
         </div>
-        
-        <!-- بک‌دراپ منو -->
-        <div id="mobile-menu-backdrop" class="fixed inset-0 top-16 bg-black/20 hidden md:hidden"></div>
-      </header>`;
+      </header>
+      <div id="mobile-menu-backdrop" class="hidden fixed inset-0 z-40 bg-black/30"></div>`;
   },
 
   bind(container, callbacks = {}) {
-    const menuBtn = container.querySelector('#mobile-menu-btn');
-    const menu = container.querySelector('#mobile-menu');
-    const backdrop = container.querySelector('#mobile-menu-backdrop');
+    // آخرین callbacks همیشه نگه داشته می‌شود، حتی اگر bind چند بار صدا زده شود
+    Header._callbacks = callbacks || {};
+
+    if (_docBound) return;
+    _docBound = true;
+
+    function isOpen() {
+      const menu = document.getElementById('mobile-menu');
+      return !!menu && !menu.classList.contains('hidden');
+    }
 
     function setMenuOpen(open) {
+      const menu = document.getElementById('mobile-menu');
+      const backdrop = document.getElementById('mobile-menu-backdrop');
+      const btn = document.getElementById('mobile-menu-btn');
+
       menu?.classList.toggle('hidden', !open);
       backdrop?.classList.toggle('hidden', !open);
+      btn?.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('overflow-hidden', open);
 
-      // تغییر آیکون منو به ضربدر
-      const icon = menuBtn?.querySelector('[data-lucide]');
+      const icon = btn?.querySelector('[data-lucide]');
       if (icon) {
         icon.setAttribute('data-lucide', open ? 'x' : 'menu');
         window.lucide?.createIcons();
       }
     }
 
+    // تاگل با گارد ضد دابل‌کلیک/رویداد تکراری
+    function tryToggle() {
+      const now = Date.now();
+      if (now - _lastToggleAt < 250) return;
+      _lastToggleAt = now;
+      setMenuOpen(!isOpen());
+    }
+
     function highlightNav() {
+      const menu = document.getElementById('mobile-menu');
+      if (!menu) return;
       const hash = location.hash.split('?')[0];
-      container.querySelectorAll('.header-nav-link, #mobile-menu a[data-link]').forEach((a) => {
+      menu.querySelectorAll('a[data-link]').forEach((a) => {
         const href = a.getAttribute('href');
         const active = href === hash || (hash === '#/' && href === '#/');
-        a.classList.toggle('text-body', active);
         a.classList.toggle('font-bold', active);
         if (a.classList.contains('mobile-nav-item')) {
           a.classList.toggle('text-accent', active);
-          a.classList.toggle('bg-black/5', active);
         }
       });
     }
 
-    highlightNav();
-    window.addEventListener('hashchange', highlightNav);
+    document.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target) return;
 
-    // لاگ‌اوت دسکتاپ
-    container.querySelector('#header-logout-btn')?.addEventListener('click', async () => {
-      await callbacks.onLogout?.();
-    });
+      const menu = document.getElementById('mobile-menu');
+      if (!menu) return;
 
-    // لاگ‌اوت موبایل
-    container.querySelector('#mobile-logout-btn')?.addEventListener('click', async () => {
-      setMenuOpen(false);
-      await callbacks.onLogout?.();
-    });
+      // ۱) دکمه‌های تاگل: همبرگری / آیکون اکانت (در حالت لاگین)
+      if (target.closest('#mobile-menu-btn, #header-account-btn')) {
+        tryToggle();
+        return;
+      }
 
-    // باز کردن سرچ
-    container.querySelectorAll('[data-open-search]').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      // ۲) ردیف سرچ داخل منو
+      if (target.closest('[data-open-search]')) {
         setMenuOpen(false);
-        callbacks.onOpenSearch?.();
-      });
+        Header._callbacks?.onOpenSearch?.();
+        return;
+      }
+
+      // ۳) دکمه‌ی خروج داخل منو
+      if (target.closest('#mobile-logout-btn')) {
+        setMenuOpen(false);
+        Header._callbacks?.onLogout?.();
+        return;
+      }
+
+      if (!isOpen()) return;
+
+      // ۴) کلیک بیرون از هدر (روی بک‌دراپ یا هر جای صفحه)
+      if (!target.closest('header')) {
+        setMenuOpen(false);
+        return;
+      }
+
+      // ۵) لینک‌های داخل هدر: دسته‌بندی‌ها، لوگو، سبد خرید
+      if (target.closest('a[data-link]')) {
+        setMenuOpen(false);
+      }
     });
 
-    // دکمه همبرگر (اصلاح منطق)
-    menuBtn?.addEventListener('click', () => {
-      const isHidden = menu?.classList.contains('hidden');
-      setMenuOpen(isHidden);
-    });
-
-    // بستن منو با کلیک روی بک‌دراپ
-    backdrop?.addEventListener('click', () => setMenuOpen(false));
-
-    // بستن منو هنگام کلیک روی لینک‌ها
-    container.querySelectorAll('#mobile-menu a[data-link]').forEach((a) => {
-      a.addEventListener('click', () => setMenuOpen(false));
-    });
-
-    // بستن با کلید Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !menu?.classList.contains('hidden')) setMenuOpen(false);
+      if (e.key === 'Escape' && isOpen()) setMenuOpen(false);
     });
+
+    window.addEventListener('hashchange', highlightNav);
+    highlightNav();
   },
 };
 

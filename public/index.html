@@ -126,44 +126,7 @@
       display: block;
     }
 
-    /* Mobile Menu */
-    #mobile-menu {
-      position: fixed;
-      top: 64px;
-      left: 0;
-      right: 0;
-      z-index: 48;
-      opacity: 0;
-      transform: translateY(-6px) scale(0.99);
-      pointer-events: none;
-      transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-      background-color: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    #mobile-menu.open {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    #mobile-menu-backdrop {
-      position: fixed;
-      inset: 0;
-      top: 64px;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(3px);
-      z-index: 47;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    #mobile-menu-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    /* Mobile menu visibility is controlled by Header.js and input.css. */
 
     /* Hamburger Icon */
     .ham-bar {
@@ -390,40 +353,40 @@
       </main>
     </div>
 
-        <!-- Wishlist Page (WISHLIST) -->
-        <div data-page="wishlist">
-          <main class="max-w-[1280px] mx-auto px-4 md:px-10 py-10 md:py-14">
-            <div class="flex items-center justify-between mb-8 border-b border-border pb-6">
-              <div>
-                <h1 class="text-2xl md:text-3xl font-black text-body mb-1">My Wishlist</h1>
-                <p class="text-muted text-sm">Products you've saved for later</p>
-              </div>
-              <button id="wishlist-clear-btn" type="button"
-                class="hidden text-xs font-bold uppercase tracking-[0.15em] text-muted hover:text-red-500 transition-colors">
-                Clear all
-              </button>
-            </div>
-        
-            <div id="wishlist-loading" class="text-center py-24 text-muted">
-              <p class="text-4xl animate-pulse mb-3">✦</p>
-              <p>Loading...</p>
-            </div>
-        
-            <div id="wishlist-empty" class="hidden text-center py-24">
-              <i data-lucide="heart" class="w-16 h-16 mb-6 text-muted mx-auto"></i>
-              <p class="text-xl mb-4 text-body">Your wishlist is empty</p>
-              <a href="#/shop" data-link
-                class="inline-block px-8 py-3 bg-accent text-white rounded-lg hover:bg-accent-hover font-bold text-sm">
-                Browse products
-              </a>
-            </div>
-        
-            <div id="wishlist-content" class="hidden">
-              <div id="wishlist-items" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
-            </div>
-          </main>
+    <!-- Wishlist Page (WISHLIST) -->
+    <div data-page="wishlist">
+      <main class="max-w-[1280px] mx-auto px-4 md:px-10 py-10 md:py-14">
+        <div class="flex items-center justify-between mb-8 border-b border-border pb-6">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-black text-body mb-1">My Wishlist</h1>
+            <p class="text-muted text-sm">Products you've saved for later</p>
+          </div>
+          <button id="wishlist-clear-btn" type="button"
+            class="hidden text-xs font-bold uppercase tracking-[0.15em] text-muted hover:text-red-500 transition-colors">
+            Clear all
+          </button>
         </div>
-    
+
+        <div id="wishlist-loading" class="text-center py-24 text-muted">
+          <p class="text-4xl animate-pulse mb-3">✦</p>
+          <p>Loading...</p>
+        </div>
+
+        <div id="wishlist-empty" class="hidden text-center py-24">
+          <i data-lucide="heart" class="w-16 h-16 mb-6 text-muted mx-auto"></i>
+          <p class="text-xl mb-4 text-body">Your wishlist is empty</p>
+          <a href="#/shop" data-link
+            class="inline-block px-8 py-3 bg-accent text-white rounded-lg hover:bg-accent-hover font-bold text-sm">
+            Browse products
+          </a>
+        </div>
+
+        <div id="wishlist-content" class="hidden">
+          <div id="wishlist-items" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
+        </div>
+      </main>
+    </div>
+
     <!-- Checkout Page (CHECKOUT) -->
     <div data-page="checkout">
       <main class="max-w-[1100px] mx-auto px-4 md:px-10 py-12">

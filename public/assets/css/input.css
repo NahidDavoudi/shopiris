@@ -532,3 +532,23 @@ div[data-page].active {
     transform: translateY(0) scale(1);
   }
 }
+/* ── Minimal Header Menu (hamburger dropdown) ── */
+#mobile-menu:not(.hidden) {
+  animation: headerMenuIn 0.22s ease-out;
+}
+
+#mobile-menu-backdrop:not(.hidden) {
+  animation: searchFadeIn 0.2s ease-out;
+}
+
+@keyframes headerMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
