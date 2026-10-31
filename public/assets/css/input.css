@@ -10,14 +10,49 @@
   --color-muted: #86868b;
   --color-text-dim: rgba(0, 0, 0, 0.55);
   --color-body-text: #1d1d1f;
-  --font-display: 'Montserrat', 'Vazirmatn', sans-serif;
-  --font-vazir: 'Montserrat', 'Vazirmatn', sans-serif;
-  /* --font-felipa: 'Felipa', sans-serif; */
-  --font-fancy: 'MeaCulpa';
+
+  /* ── Typography ── */
+  --font-display: 'EB Garamond', 'Iowan Old Style', 'Times New Roman', serif;
+  --font-vazir: 'EB Garamond', 'Vazirmatn', serif;
+  --font-fancy: 'EB Garamond', serif;
+  /* Make Garamond the default for everything (preflight uses --font-sans) */
+  --font-sans: 'EB Garamond', 'Iowan Old Style', 'Times New Roman', serif;
+  --font-serif: 'EB Garamond', 'Iowan Old Style', 'Times New Roman', serif;
+}
+
+@layer base {
+  html {
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    /* Garamond reads small — a hair of tracking keeps it crisp in UI */
+    letter-spacing: 0.005em;
+  }
+
+  /* Form controls inherit the Garamond stack */
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+    letter-spacing: inherit;
+  }
 }
 
 .root {
   font-family: var(--font-display);
+}
+
+/* Fancy/italic accent style (previously MeaCulpa) */
+.font-fancy {
+  font-family: var(--font-display);
+  font-style: italic;
 }
 
 /* Semantic theme utilities (overridable via core/theme.js) */
@@ -209,11 +244,9 @@ div[data-page].active {
   align-items: center;
   justify-content: flex-start;
   color: #ffffff;
-  /* یا هر رنگی که تو عکس مشتری مشخصه */
   background: transparent;
   border: none;
   box-shadow: none;
-  /* حذف کامل سایه‌های استایل‌های قبلی */
   padding: 0;
   cursor: pointer;
   text-decoration: none;
@@ -532,6 +565,7 @@ div[data-page].active {
     transform: translateY(0) scale(1);
   }
 }
+
 /* ── Minimal Header Menu (hamburger dropdown) ── */
 #mobile-menu:not(.hidden) {
   animation: headerMenuIn 0.22s ease-out;
