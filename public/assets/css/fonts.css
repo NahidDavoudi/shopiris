@@ -1,9 +1,7 @@
-/* =========================================================
-   Display font: Montserrat
-   ========================================================= */
+/* EB Garamond loaded via Google Fonts API in HTML <head>.
 
-@font-face {
-    font-family: 'Montserrat';
+/* =========================================================
+   Body font: Vazirmatn
     src: url('../fonts/Montserrat/static/Montserrat-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
