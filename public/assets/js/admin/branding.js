@@ -15,7 +15,7 @@ export function getAdminText(path, fallback = '') {
 
 export function applyAdminBranding() {
   const t = storeConfig.texts?.admin || {};
-  pageTitle(t.title || 'پنل مدیریت');
+  pageTitle(t.title || 'Admin Panel');
 
   document.querySelectorAll('[data-admin-text]').forEach((el) => {
     const val = getByPath(t, el.dataset.adminText);

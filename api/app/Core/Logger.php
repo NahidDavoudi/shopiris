@@ -28,12 +28,12 @@ class Logger
 
         $logger = new MonologLogger($channel);
 
-        // فرمت لاگ
+        // Log format
         $dateFormat = 'Y-m-d H:i:s';
         $output = "[%datetime%] %channel%.%level_name%: %message% %context%\n";
         $formatter = new LineFormatter($output, $dateFormat);
 
-        // فایل rotating — هر روز یه فایل جدید، max 30 روز نگه داره
+        // Rotating file — a new file each day, keep max 30 days
         $fileHandler = new RotatingFileHandler(
             self::$logPath . "/{$channel}.log",
             30,
@@ -42,7 +42,7 @@ class Logger
         $fileHandler->setFormatter($formatter);
         $logger->pushHandler($fileHandler);
 
-        // توی dev، توی console هم نشون بده
+        // In dev, also print to console
         if (Env::get('APP_ENV') === 'development') {
             $consoleHandler = new StreamHandler('php://stderr', MonologLogger::DEBUG);
             $consoleHandler->setFormatter($formatter);
@@ -53,7 +53,7 @@ class Logger
         return $logger;
     }
 
-    // ─── Shortcut های استاتیک ─────────────────────────────────────────────
+    // ─── Static shortcuts ─────────────────────────────────────────────
 
     public static function info(string $message, array $context = []): void
     {
@@ -75,7 +75,7 @@ class Logger
         self::get()->debug($message, $context);
     }
 
-    // ─── Channel های خاص ─────────────────────────────────────────────────
+    // ─── Special channels ───────────────────────────────────────────────
 
     public static function auth(): MonologLogger
     {

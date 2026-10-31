@@ -37,33 +37,33 @@ class UploadHelper
         $prefix  = $options['prefix'];
 
         if (!in_array($file['type'], $allowed, true)) {
-            throw new \RuntimeException('فرمت فایل مجاز نیست.', 422);
+            throw new \RuntimeException('File format is not allowed.', 422);
         }
 
         $detectedMime = self::detectMimeType($file['tmp_name']);
         if (!$detectedMime || !in_array($detectedMime, $allowed, true)) {
-            throw new \RuntimeException('نوع واقعی فایل مجاز نیست.', 422);
+            throw new \RuntimeException('Actual file type is not allowed.', 422);
         }
 
         if ($file['size'] > $maxSize) {
             $mb = (int) ($maxSize / (1024 * 1024));
-            throw new \RuntimeException("حجم فایل بیشتر از {$mb} مگابایت است.", 422);
+            throw new \RuntimeException("File size exceeds {$mb} MB.", 422);
         }
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!self::extensionMatchesMime($ext, $detectedMime)) {
-            throw new \RuntimeException('پسوند فایل با نوع آن سازگار نیست.', 422);
+            throw new \RuntimeException('File extension does not match its type.', 422);
         }
 
         $filename = uniqid($prefix, true) . '.' . $ext;
         $dir      = self::uploadDir($folder);
 
         if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
-            throw new \RuntimeException('خطا در ایجاد پوشه آپلود.', 500);
+            throw new \RuntimeException('Failed to create the upload directory.', 500);
         }
 
         if (!move_uploaded_file($file['tmp_name'], $dir . $filename)) {
-            throw new \RuntimeException('خطا در آپلود فایل.', 500);
+            throw new \RuntimeException('File upload failed.', 500);
         }
 
         return [

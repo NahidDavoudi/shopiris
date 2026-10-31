@@ -1,6 +1,6 @@
 /**
  * admin/pages/discounts.js
- * مدیریت کدهای تخفیف: لیست و ایجاد
+ * Discount code management: list and create
  * وابستگی: helpers.js, api.js
  */
 
@@ -17,7 +17,7 @@
     if (!el) return;
 
     if (!list?.length) {
-      el.innerHTML = `<p class="text-dim col-span-full text-center py-8">${_t('discounts.empty', 'کد تخفیفی ثبت نشده')}</p>`;
+      el.innerHTML = `<p class="text-dim col-span-full text-center py-8">${_t('discounts.empty', 'No discount codes yet')}</p>`;
       return;
     }
 
@@ -34,12 +34,12 @@
           : 'bg-surface text-dim border border-border';
 
       const statusLabel = active
-        ? _t('discounts.active', 'فعال')
-        : (expired ? _t('discounts.expired', 'منقضی') : _t('discounts.inactive', 'غیرفعال'));
+        ? _t('discounts.active', 'Active')
+        : (expired ? _t('discounts.expired', 'Expired') : _t('discounts.inactive', 'Inactive'));
 
       const valueLabel = d.type === 'percent'
-        ? `${d.value}${_t('discounts.percentOff', '٪ تخفیف')}`
-        : `${Number(d.value).toLocaleString('fa-IR')} ${_t('discounts.fixedOff', 'تومان تخفیف')}`;
+        ? `${d.value}${_t('discounts.percentOff', '% off')}`
+        : `${Number(d.value).toLocaleString('en-US')} ${_t('discounts.fixedOff', 'Toman off')}`;
 
       return `
         <div class="admin-card rounded-2xl p-5 flex flex-col gap-4 hover:border-accent/30 transition-colors relative overflow-hidden">
@@ -62,8 +62,8 @@
             <span class="text-body font-bold text-sm">${valueLabel}</span>
           </div>
           <div class="flex gap-4 text-xs text-dim">
-            ${d.valid_from ? `<span>از ${new Date(d.valid_from).toLocaleDateString('fa-IR')}</span>` : ''}
-            ${d.valid_to   ? `<span>تا ${new Date(d.valid_to).toLocaleDateString('fa-IR')}</span>`   : `<span>${_t('discounts.noExpiry', 'بدون تاریخ انقضا')}</span>`}
+            ${d.valid_from ? `<span>From ${new Date(d.valid_from).toLocaleDateString('en-US')}</span>` : ''}
+            ${d.valid_to   ? `<span>To ${new Date(d.valid_to).toLocaleDateString('en-US')}</span>`   : `<span>${_t('discounts.noExpiry', 'No expiry')}</span>`}
           </div>
           <div class="flex gap-2 pt-1 border-t border-border">
             ${active ? `
@@ -71,13 +71,13 @@
                 class="flex-1 py-2 text-xs font-bold bg-surface hover:bg-card
                        text-muted hover:text-body border border-border
                        rounded-lg transition-all">
-                ${_t('discounts.deactivate', 'غیرفعال کردن')}
+                ${_t('discounts.deactivate', 'Deactivate')}
               </button>` : ''}
             <button onclick="deleteDiscount(${d.id})"
               class="flex-1 py-2 text-xs font-bold bg-accent/10 hover:bg-accent/20
                      text-accent border border-accent/30 hover:border-accent/60
                      rounded-lg transition-all">
-              ${_t('discounts.delete', 'حذف')}
+              ${_t('discounts.delete', 'Delete')}
             </button>
           </div>
         </div>`;
@@ -89,7 +89,7 @@
     const el = $('discountsContainer');
     if (!el) return;
 
-    el.innerHTML = `<p class="text-dim col-span-full text-center py-8 animate-pulse">${_t('discounts.loading', 'در حال بارگذاری...')}</p>`;
+    el.innerHTML = `<p class="text-dim col-span-full text-center py-8 animate-pulse">${_t('discounts.loading', 'Loading...')}</p>`;
 
     try {
       const list = await API.discounts.list();
@@ -103,7 +103,7 @@
   window.deactivateDiscount = async function (id) {
     try {
       await API.discounts.deactivate(id);
-      toast('کد تخفیف غیرفعال شد');
+      toast('Discount code deactivated');
       loadDiscounts();
     } catch (e) {
       toast(e.message, 'error');
@@ -112,10 +112,10 @@
 
   /* ── Delete ─────────────────────────────────────────────────── */
   window.deleteDiscount = async function (id) {
-    if (!confirm('حذف شود؟')) return;
+    if (!confirm('Delete this discount code?')) return;
     try {
       await API.discounts.delete(id);
-      toast('کد تخفیف حذف شد');
+      toast('Discount code deleted');
       loadDiscounts();
     } catch (e) {
       toast(e.message, 'error');
@@ -136,14 +136,14 @@
       valid_to:   getVal('discountValidTo'),
     };
     if (!payload.code || !payload.value) {
-      toast(_t('common.codeValueRequired', 'کد و مقدار الزامی‌اند'), 'error');
+      toast(_t('common.codeValueRequired', 'Code and value are required'), 'error');
       return;
     }
     try {
       setLoading(true);
       await API.discounts.create(payload);
       setLoading(false);
-      toast('کد تخفیف ایجاد شد');
+      toast('Discount code created');
       hideModal('discountModal');
       $('discountForm')?.reset();
       loadDiscounts();

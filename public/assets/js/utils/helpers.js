@@ -36,16 +36,16 @@ export function debounce(fn, ms = 300) {
 
 export function formatDate(dateStr) {
   if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('fa-IR');
+  return new Date(dateStr).toLocaleDateString('en-US');
 }
 
 /** Admin DOM shortcuts — exposed on window for admin pages */
 const DEFAULT_STATUS_MAP = {
-  pending:   { label: 'در انتظار',       cls: 'bg-yellow-100 text-yellow-800' },
-  paid:      { label: 'پرداخت شده',      cls: 'bg-blue-100 text-blue-800' },
-  shipped:   { label: 'ارسال شده',       cls: 'bg-purple-100 text-purple-800' },
-  delivered: { label: 'تحویل داده شده', cls: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'لغو شده',         cls: 'bg-card text-muted' },
+  pending:   { label: 'Pending',       cls: 'bg-yellow-100 text-yellow-800' },
+  paid:      { label: 'Paid',         cls: 'bg-blue-100 text-blue-800' },
+  shipped:   { label: 'Shipped',      cls: 'bg-purple-100 text-purple-800' },
+  delivered: { label: 'Delivered',    cls: 'bg-green-100 text-green-800' },
+  cancelled: { label: 'Cancelled',    cls: 'bg-card text-muted' },
 };
 
 export function refreshStatusMap() {
@@ -59,8 +59,8 @@ export function installAdminHelpers() {
   window.setText = (id, v) => { const e = window.$(id); if (e) e.textContent = v; };
   window.getVal = (id) => window.$(id)?.value.trim() ?? '';
   window.toEnDigit = (s) => String(s)
-    .replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 1776)
-    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 1632);
+    .replace(/[\u06F0-\u06F9]/g, (d) => d.charCodeAt(0) - 1776)
+    .replace(/[\u0660-\u0669]/g, (d) => d.charCodeAt(0) - 1632);
   window.setLoading = (on) => (on ? window.show('loadingOverlay') : window.hide('loadingOverlay'));
   window.toast = toast;
   window.escapeHtml = escapeHtml;

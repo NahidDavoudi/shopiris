@@ -10,7 +10,7 @@ class Response {
         exit;
     }
 
-    public static function success(mixed $data = null, string $message = 'عملیات با موفقیت انجام شد', int $code = 200): never {
+    public static function success(mixed $data = null, string $message = 'Operation completed successfully', int $code = 200): never {
         self::json([
             'success' => true,
             'message' => $message,
@@ -18,7 +18,7 @@ class Response {
         ], $code);
     }
 
-    public static function created(mixed $data = null, string $message = 'با موفقیت ایجاد شد'): never {
+    public static function created(mixed $data = null, string $message = 'Created successfully'): never {
         self::success($data, $message, 201);
     }
 
@@ -35,27 +35,27 @@ class Response {
         self::json($response, $code);
     }
 
-    public static function notFound(string $message = 'موردی یافت نشد'): never {
+    public static function notFound(string $message = 'Item not found'): never {
         self::error($message, 404);
     }
 
-    public static function unauthorized(string $message = 'دسترسی غیرمجاز'): never {
+    public static function unauthorized(string $message = 'Unauthorized'): never {
         self::error($message, 401);
     }
 
-    public static function forbidden(string $message = 'شما اجازه دسترسی ندارید'): never {
+    public static function forbidden(string $message = 'You do not have access'): never {
         self::error($message, 403);
     }
 
-    public static function tooManyRequests(string $message = 'تعداد درخواست‌ها بیش از حد مجاز است'): never {
+    public static function tooManyRequests(string $message = 'Too many requests'): never {
         self::error($message, 429);
     }
 
-    public static function validation(array $errors, string $message = 'خطای اعتبارسنجی'): never {
+    public static function validation(array $errors, string $message = 'Validation error'): never {
         self::error($message, 422, $errors);
     }
 
-    public static function noContent(string $message = 'با موفقیت حذف شد'): never {
+    public static function noContent(string $message = 'Deleted successfully'): never {
         http_response_code(204);
         exit;
     }

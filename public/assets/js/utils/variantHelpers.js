@@ -21,14 +21,14 @@ export function resolveProductVariant(product, variantId, { strict = false } = {
   if (variantId) {
     const match = product.variants.find((v) => Number(v.id) === Number(variantId));
     if (!match && strict) {
-      throw new Error('واریانت انتخاب‌شده معتبر نیست.');
+      throw new Error('The selected variant is not valid.');
     }
     return match || null;
   }
 
   if (productRequiresVariantSelection(product)) {
     if (strict) {
-      throw new Error('انتخاب واریانت (سایز/رنگ) برای این محصول الزامی است.');
+      throw new Error('Selecting a variant (size/color) is required for this product.');
     }
     return null;
   }

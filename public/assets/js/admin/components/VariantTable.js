@@ -3,7 +3,7 @@ import { parsePrice, attachPriceFormatterAll } from '../../utils/priceFormatter.
 const VariantTable = {
   render({ variants = [], t = {} } = {}) {
     if (!variants.length) {
-      return `<p class="text-sm text-dim py-4 text-center">${t.emptyVariants || 'واریانتی وجود ندارد'}</p>`;
+      return `<p class="text-sm text-dim py-4 text-center">${t.emptyVariants || 'No variants'}</p>`;
     }
 
     const rows = variants.map((v) => {
@@ -17,8 +17,8 @@ const VariantTable = {
                    class="w-full min-w-[100px] bg-card border border-border rounded-lg px-2 py-1.5 text-xs text-body outline-none focus:border-accent">
           </td>
           <td class="px-3 py-2">
-            <input type="text" data-field="price" value="${price !== '' ? price.toLocaleString('fa-IR') : ''}"
-                   inputmode="numeric" placeholder="ارث‌بری"
+            <input type="text" data-field="price" value="${price !== '' ? price.toLocaleString('en-US') : ''}"
+                   inputmode="numeric" placeholder="Inherit"
                    class="w-full min-w-[90px] bg-card border border-border rounded-lg px-2 py-1.5 text-xs text-body outline-none focus:border-accent">
           </td>
           <td class="px-3 py-2">
@@ -33,10 +33,10 @@ const VariantTable = {
         <table class="w-full text-right">
           <thead>
             <tr class="bg-surface text-muted text-xs">
-              <th class="px-3 py-2 font-medium">${t.variantTitle || 'عنوان'}</th>
+              <th class="px-3 py-2 font-medium">${t.variantTitle || 'Title'}</th>
               <th class="px-3 py-2 font-medium">SKU</th>
-              <th class="px-3 py-2 font-medium">${t.price || 'قیمت'}</th>
-              <th class="px-3 py-2 font-medium">${t.stock || 'موجودی'}</th>
+              <th class="px-3 py-2 font-medium">${t.price || 'Price'}</th>
+              <th class="px-3 py-2 font-medium">${t.stock || 'Stock'}</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>

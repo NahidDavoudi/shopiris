@@ -4,8 +4,8 @@
 
 export function toEnDigit(s) {
   return String(s)
-    .replace(/[۰-۹]/g, (d) => d.charCodeAt(0) - 1776)
-    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 1632);
+    .replace(/[\u06F0-\u06F9]/g, (d) => d.charCodeAt(0) - 1776)
+    .replace(/[\u0660-\u0669]/g, (d) => d.charCodeAt(0) - 1632);
 }
 
 export function formatPrice(amount, suffix = 'T') {

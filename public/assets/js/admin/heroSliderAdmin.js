@@ -68,7 +68,7 @@ const HeroSliderAdmin = {
       list.innerHTML = `
         <p class="col-span-full text-sm text-muted text-center py-8 border border-dashed border-border rounded-xl"
            data-admin-text="settings.identity.heroSliderEmpty">
-          ${t('settings.identity.heroSliderEmpty', 'هنوز تصویری برای اسلایدر هیرو آپلود نشده است.')}
+          ${t('settings.identity.heroSliderEmpty', 'No images uploaded for the hero slider yet.')}
         </p>`;
       return;
     }
@@ -88,12 +88,12 @@ const HeroSliderAdmin = {
             <button type="button"
                     class="text-xs px-3 py-1.5 rounded-lg bg-card hover:bg-body border border-border transition-all"
                     data-hero-replace="${index}">
-              ${t('settings.identity.heroSliderReplace', 'جایگزینی')}
+              ${t('settings.identity.heroSliderReplace', 'Replace')}
             </button>
             <button type="button"
                     class="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-all"
                     data-hero-remove="${index}">
-              ${t('settings.identity.heroSliderRemove', 'حذف')}
+              ${t('settings.identity.heroSliderRemove', 'Remove')}
             </button>
           </div>
         </div>
@@ -101,7 +101,7 @@ const HeroSliderAdmin = {
           <img src="${item.url}" alt="" class="w-full h-full object-cover pointer-events-none">
         </div>
         <div>
-          <label class="block text-muted mb-1.5 text-xs">${t('settings.identity.heroSliderAlt', 'متن جایگزین (alt)')}</label>
+          <label class="block text-muted mb-1.5 text-xs">${t('settings.identity.heroSliderAlt', 'Alt text')}</label>
           <input type="text"
                  data-hero-alt
                  value="${item.alt || ''}"
@@ -191,7 +191,7 @@ const HeroSliderAdmin = {
 
     $('heroSliderAddBtn')?.addEventListener('click', () => {
       if (this._images.length >= this._maxImages()) {
-        toast(this._t('settings.identity.heroSliderMaxReached', 'حداکثر ۳ تصویر مجاز است.'), 'error');
+        toast(this._t('settings.identity.heroSliderMaxReached', 'A maximum of 3 images is allowed.'), 'error');
         return;
       }
       this._replaceIndex = null;
@@ -204,7 +204,7 @@ const HeroSliderAdmin = {
       if (!file) return;
 
       if (this._replaceIndex == null && this._images.length >= this._maxImages()) {
-        toast(this._t('settings.identity.heroSliderMaxReached', 'حداکثر ۳ تصویر مجاز است.'), 'error');
+        toast(this._t('settings.identity.heroSliderMaxReached', 'A maximum of 3 images is allowed.'), 'error');
         return;
       }
 
@@ -212,7 +212,7 @@ const HeroSliderAdmin = {
         setLoading(true);
         const result = await API.settings.uploadHeroSlide(file);
         const url = result?.url;
-        if (!url) throw new Error('آدرس تصویر دریافت نشد');
+        if (!url) throw new Error('Image URL not received');
 
         const defaultAlt = $('settingsShopName')?.value?.trim() || storeConfig.name;
 
@@ -234,7 +234,7 @@ const HeroSliderAdmin = {
         }
 
         this._render();
-        toast(this._t('settings.uploadSuccess', 'تصویر آپلود شد'));
+        toast(this._t('settings.uploadSuccess', 'Image uploaded'));
       } catch (err) {
         toast(err.message, 'error');
       } finally {

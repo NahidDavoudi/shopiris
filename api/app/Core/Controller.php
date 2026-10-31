@@ -13,12 +13,12 @@ abstract class Controller
         Response::json($data, $code);
     }
 
-    protected function success(mixed $data = null, string $message = 'عملیات با موفقیت انجام شد', int $code = 200): void
+    protected function success(mixed $data = null, string $message = 'Operation completed successfully', int $code = 200): void
     {
         Response::success($data, $message, $code);
     }
 
-    protected function created(mixed $data = null, string $message = 'با موفقیت ایجاد شد'): void
+    protected function created(mixed $data = null, string $message = 'Created successfully'): void
     {
         Response::created($data, $message);
     }
@@ -35,32 +35,32 @@ abstract class Controller
         return ($code >= 400 && $code < 600) ? $code : $default;
     }
 
-    protected function validationError(array $errors, string $message = 'خطای اعتبارسنجی'): void
+    protected function validationError(array $errors, string $message = 'Validation error'): void
     {
         Response::validation($errors, $message);
     }
 
-    protected function notFound(string $message = 'موردی یافت نشد'): void
+    protected function notFound(string $message = 'Item not found'): void
     {
         Response::notFound($message);
     }
 
-    protected function unauthorized(string $message = 'دسترسی غیرمجاز'): void
+    protected function unauthorized(string $message = 'Unauthorized'): void
     {
         Response::unauthorized($message);
     }
 
-    protected function forbidden(string $message = 'شما اجازه دسترسی ندارید'): void
+    protected function forbidden(string $message = 'You do not have access'): void
     {
         Response::forbidden($message);
     }
 
-    protected function tooManyRequests(string $message = 'تعداد درخواست‌ها بیش از حد مجاز است'): void
+    protected function tooManyRequests(string $message = 'Too many requests'): void
     {
         Response::tooManyRequests($message);
     }
 
-    protected function noContent(string $message = 'با موفقیت حذف شد'): void
+    protected function noContent(string $message = 'Deleted successfully'): void
     {
         Response::noContent($message);
     }

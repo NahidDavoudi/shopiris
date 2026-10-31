@@ -5,10 +5,10 @@ class Env
 {
     public static function load($path = null)
     {
-        $path = $path ?? dirname(__DIR__, 2) . '/.env'; // ریشه پروژه
+        $path = $path ?? dirname(__DIR__, 2) . '/.env'; // project root
 
         if (!file_exists($path)) {
-            throw new \RuntimeException(".env فایل یافت نشد: {$path}");
+            throw new \RuntimeException(".env file not found: {$path}");
         }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -30,7 +30,7 @@ class Env
     {
         $value = $_ENV[$key] ?? getenv($key);
 
-        // اگر مقدار false، null یا رشته‌ی خالی برگشت → پیش‌فرض
+        // If value is false, null or empty string → default
         if ($value === false || $value === null || $value === '') {
             return $default;
         }
@@ -38,7 +38,7 @@ class Env
         return $value;
     }
 
-    /** @throws \RuntimeException در محیط production اگر تنظیمات حیاتی ناامن باشد */
+    /** @throws \RuntimeException in production if critical settings are insecure */
     public static function assertProductionReady(): void
     {
         if (self::get('APP_ENV', 'production') !== 'production') {
@@ -50,16 +50,16 @@ class Env
         $refresh = (string) self::get('REFRESH_SECRET', '');
 
         if (in_array($jwt, $weakSecrets, true) || strlen($jwt) < 32) {
-            throw new \RuntimeException('JWT_SECRET در محیط production باید حداقل ۳۲ کاراکتر (256-bit) و غیر پیش‌فرض باشد.');
+            throw new \RuntimeException('JWT_SECRET in production must be at least 32 characters (256-bit) and not the default value.');
         }
 
         if (in_array($refresh, $weakSecrets, true) || strlen($refresh) < 32) {
-            throw new \RuntimeException('REFRESH_SECRET در محیط production باید حداقل ۳۲ کاراکتر (256-bit) و غیر پیش‌فرض باشد.');
+            throw new \RuntimeException('REFRESH_SECRET in production must be at least 32 characters (256-bit) and not the default value.');
         }
 
         $uploadDir = self::get('UPLOAD_DIR');
         if (!$uploadDir || !is_dir($uploadDir)) {
-            throw new \RuntimeException('UPLOAD_DIR در production باید تنظیم شده و خارج از webroot باشد.');
+            throw new \RuntimeException('UPLOAD_DIR must be set in production and located outside the webroot.');
         }
     }
 }

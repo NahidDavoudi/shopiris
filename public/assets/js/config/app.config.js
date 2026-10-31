@@ -1,10 +1,10 @@
 /**
- * app.config.js — تنظیمات زیرساختی (ثابت بین فروشگاه‌ها)
+ * app.config.js — infrastructure settings (constant across stores)
  */
 export default {
   app: {
     name: 'IRIS',
-    locale: 'fa-IR',
+    locale: 'en-US',
   },
 
   api: {
@@ -24,16 +24,16 @@ export default {
   },
 
   messages: {
-    network: 'خطا در اتصال به سرور. اتصال اینترنت را بررسی کنید.',
-    timeout: 'زمان درخواست به پایان رسید. دوباره تلاش کنید.',
-    parse: 'پاسخ سرور قابل پردازش نیست.',
-    unknown: 'خطای ناشناخته رخ داد.',
-    unauthorized: 'نشست شما منقضی شده است. لطفاً دوباره وارد شوید.',
-    forbidden: 'شما اجازه انجام این عملیات را ندارید.',
-    notFound: 'مورد درخواستی یافت نشد.',
-    validation: 'لطفاً اطلاعات وارد شده را بررسی کنید.',
-    rateLimit: 'تعداد درخواست‌ها بیش از حد مجاز است. کمی صبر کنید.',
-    server: 'خطای داخلی سرور. بعداً تلاش کنید.',
+    network: 'Connection error. Check your internet connection.',
+    timeout: 'The request timed out. Please try again.',
+    parse: 'The server response could not be processed.',
+    unknown: 'An unknown error occurred.',
+    unauthorized: 'Your session has expired. Please log in again.',
+    forbidden: 'You are not allowed to perform this action.',
+    notFound: 'The requested item was not found.',
+    validation: 'Please check the entered information.',
+    rateLimit: 'Too many requests. Please wait a moment.',
+    server: 'Internal server error. Try again later.',
   },
 
   fallback: {

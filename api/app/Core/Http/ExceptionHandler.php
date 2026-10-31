@@ -16,14 +16,14 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  نقطه ورود اصلی — همه exception ها اینجا میان
+    //  Main entry point — all exceptions come here
     // ─────────────────────────────────────────
 
     public function handle(Throwable $e): void
 {
     $statusCode = $this->resolveStatusCode($e);
 
-    // ← این رو اضافه کن
+    // ← add this
     if ($statusCode >= 500) {
         Logger::error($e->getMessage(), [
             'exception' => get_class($e),
@@ -40,8 +40,8 @@ class ExceptionHandler
 }
 
     // ─────────────────────────────────────────
-    //  تبدیل PHP errors به Exception
-    //  (set_error_handler این رو صدا می‌زنه)
+    //  Convert PHP errors to Exception
+    //  (set_error_handler calls this)
     // ─────────────────────────────────────────
 
     public function handleError(
@@ -58,7 +58,7 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  پاسخ JSON
+    //  JSON response
     // ─────────────────────────────────────────
 
     private function respondJson(Throwable $e, int $code): void
@@ -71,7 +71,7 @@ class ExceptionHandler
             'message' => $this->resolveMessage($e, $code),
         ];
 
-        // در dev mode اطلاعات کامل‌تر نشون بده
+        // Show more complete info in dev mode
         if ($this->isDevMode) {
             $body['debug'] = [
                 'exception' => get_class($e),
@@ -87,7 +87,7 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  پاسخ HTML
+    //  HTML response
     // ─────────────────────────────────────────
 
     private function respondHtml(Throwable $e, int $code): void
@@ -95,42 +95,42 @@ class ExceptionHandler
         http_response_code($code);
         header('Content-Type: text/html; charset=utf-8');
 
-        // اگه dev mode بود و view وجود نداشت، خطای خام نشون بده
+        // In dev mode, if the view doesn't exist, show the raw error
         if ($this->isDevMode) {
             $this->renderDevPage($e, $code);
             exit;
         }
 
-        // فایل view متناسب با status code
+        // View file matching the status code
         $viewPath = $this->resolveView($code);
 
         if (file_exists($viewPath)) {
-            // متغیرهای قابل دسترس داخل view
+            // Variables accessible inside the view
             $statusCode = $code;
             $message    = $this->resolveMessage($e, $code);
             require $viewPath;
         } else {
-            // fallback اگه فایل view پیدا نشد
-            echo "<h1>خطای {$code}</h1><p>" . $this->resolveMessage($e, $code) . "</p>";
+            // Fallback if the view file isn't found
+            echo "<h1>Error {$code}</h1><p>" . $this->resolveMessage($e, $code) . "</p>";
         }
 
         exit;
     }
 
     // ─────────────────────────────────────────
-    //  تعیین status code از نوع exception
+    //  Determine status code from exception type
     // ─────────────────────────────────────────
 
     private function resolveStatusCode(Throwable $e): int
     {
-        // اگه exception خودش code داشت و یه HTTP code معتبر بود، ازش استفاده کن
+        // If the exception has its own code and it's a valid HTTP code, use it
         $code = $e->getCode();
 
         if (is_int($code) && $code >= 400 && $code < 600) {
             return $code;
         }
 
-        // بر اساس نوع exception
+        // Based on the exception type
         return match (true) {
             $e instanceof \InvalidArgumentException => 400,
             $e instanceof \RuntimeException         => 400,
@@ -139,62 +139,62 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  پیام مناسب برای کاربر
+    //  Appropriate user-facing message
     // ─────────────────────────────────────────
 
     private function resolveMessage(Throwable $e, int $code): string
     {
-        // در dev mode پیام واقعی exception رو نشون بده
+        // In dev mode, show the actual exception message
         if ($this->isDevMode) {
             return $e->getMessage() ?: $this->defaultMessage($code);
         }
 
-        // در production فقط پیام‌های امن
+        // In production, only safe messages
         return $this->defaultMessage($code);
     }
 
     private function defaultMessage(int $code): string
     {
         return match ($code) {
-            400 => 'درخواست نادرست',
-            401 => 'ابتدا وارد حساب کاربری خود شوید',
-            403 => 'شما اجازه دسترسی به این بخش را ندارید',
-            404 => 'صفحه یا منبع مورد نظر یافت نشد',
-            405 => 'متد درخواست مجاز نیست',
-            422 => 'خطای اعتبارسنجی',
-            429 => 'تعداد درخواست‌ها بیش از حد مجاز است',
-            500 => 'خطای داخلی سرور',
-            503 => 'سرویس موقتاً در دسترس نیست',
-            default => 'خطای ناشناخته',
+            400 => 'Bad request',
+            401 => 'Please sign in to your account first',
+            403 => 'You do not have permission to access this section',
+            404 => 'The requested page or resource was not found',
+            405 => 'Request method not allowed',
+            422 => 'Validation error',
+            429 => 'Too many requests',
+            500 => 'Internal server error',
+            503 => 'Service temporarily unavailable',
+            default => 'Unknown error',
         };
     }
 
     // ─────────────────────────────────────────
-    //  مسیر فایل view
+    //  View file path
     // ─────────────────────────────────────────
 
     private function resolveView(int $code): string
     {
         $base = dirname(__DIR__, 2) . '/views/errors';
-        // اول دنبال فایل دقیق بگرد (مثلاً 404.php)
+        // First look for an exact file (e.g. 404.php)
         $specific = "{$base}/{$code}.php";
         if (file_exists($specific)) {
             return $specific;
         }
 
-        // بعد دنبال فایل عمومی بگرد (5xx.php یا 4xx.php)
+        // Then look for a generic file (5xx.php or 4xx.php)
         $category = (int) floor($code / 100) . 'xx';
         $general  = "{$base}/{$category}.php";
         if (file_exists($general)) {
             return $general;
         }
 
-        // fallback نهایی
+        // Final fallback
         return "{$base}/500.php";
     }
 
     // ─────────────────────────────────────────
-    //  تشخیص نوع request
+    //  Detect request type
     // ─────────────────────────────────────────
 
     private function expectsJson(): bool
@@ -208,7 +208,7 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  صفحه debug برای development
+    //  Debug page for development
     // ─────────────────────────────────────────
 
     private function renderDevPage(Throwable $e, int $code): void
@@ -260,7 +260,7 @@ class ExceptionHandler
     }
 
     // ─────────────────────────────────────────
-    //  فرمت trace برای JSON
+    //  Format trace for JSON
     // ─────────────────────────────────────────
 
     private function formatTrace(Throwable $e): array

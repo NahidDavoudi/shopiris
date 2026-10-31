@@ -1,6 +1,6 @@
 /**
  * admin/pages/categories.js
- * مدیریت دسته‌بندی‌ها: لیست، ایجاد، ویرایش، حذف، آپلود پوستر
+ * Category management: list, create, edit, delete, poster upload
  * وابستگی: helpers.js, api.js
  */
 
@@ -32,7 +32,7 @@
     const tbody = $('categoriesTableBody');
     if (!tbody) return;
     if (!cats.length) {
-      tbody.innerHTML = `<tr><td colspan="4" class="text-center py-12 text-dim">${_t('categories.empty', 'دسته‌بندی‌ای یافت نشد')}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center py-12 text-dim">${_t('categories.empty', 'No categories found')}</td></tr>`;
       return;
     }
     tbody.innerHTML = cats.map((c, i) => `
@@ -55,20 +55,20 @@
         <td class="px-5 py-4">
           <div class="flex gap-1">
             <button type="button" onclick="openBulkPriceModal(${Number(c.id)})"
-                    class="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors" title="تغییر گروهی قیمت محصولات این دسته">
+                    class="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors" title="Bulk-update prices for products in this category">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </button>
             <button onclick="editCategory(${c.id},'${c.name.replace(/'/g, "\\'")}','${(c.slug || '').replace(/'/g, "\\'")}','${(c.poster_image || c.main_image || '').replace(/'/g, "\\'")}')"
-                    class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="${_t('common.edit', 'ویرایش')}">
+                    class="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="${_t('common.edit', 'Edit')}">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a4 4 0 01-1.414.914l-3 1 1-3a4 4 0 01.914-1.414z"/>
               </svg>
             </button>
             <button onclick="deleteCategory(${c.id},'${c.name.replace(/'/g, "\\'")}')"
-                    class="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors" title="${_t('common.delete', 'حذف')}">
+                    class="p-2 rounded-lg hover:bg-accent/10 text-accent transition-colors" title="${_t('common.delete', 'Delete')}">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4h6v3M4 7h16"/>
@@ -85,8 +85,8 @@
     $('categoryForm')?.reset();
     const ci = $('categoryId');       if (ci) ci.value = '';
     const cp = $('catImagePreview');  if (cp) { cp.src = ''; cp.classList.add('hidden'); }
-    setText('categoryModalTitle', _t('categories.modalAdd', 'افزودن دسته‌بندی'));
-    setText('categorySubmitText', _t('categories.save', 'ذخیره'));
+    setText('categoryModalTitle', _t('categories.modalAdd', 'Add Category'));
+    setText('categorySubmitText', _t('categories.save', 'Save'));
     showModal('categoryModal');
   };
 
@@ -101,19 +101,19 @@
       if (imageUrl) { cp.src = imageUrl; cp.classList.remove('hidden'); }
       else          { cp.src = '';        cp.classList.add('hidden');    }
     }
-    setText('categoryModalTitle', _t('categories.modalEdit', 'ویرایش دسته‌بندی'));
-    setText('categorySubmitText', _t('categories.update', 'بروزرسانی'));
+    setText('categoryModalTitle', _t('categories.modalEdit', 'Edit Category'));
+    setText('categorySubmitText', _t('categories.update', 'Update'));
     showModal('categoryModal');
   };
 
   /* ── Delete ────────────────────────────────────────────────── */
   window.deleteCategory = async function (id, name) {
-    if (!confirm(`حذف دسته‌بندی "${name}"؟`)) return;
+    if (!confirm(`Delete category "${name}"?`)) return;
     try {
       setLoading(true);
       await API.categories.delete(id);
       setLoading(false);
-      toast('دسته‌بندی حذف شد');
+      toast('Category deleted');
       window.loadCategories();
     } catch (e) {
       setLoading(false);
@@ -128,18 +128,18 @@
       name: getVal('categoryName'),
       slug: getVal('categorySlug'),
     };
-    if (!payload.name) { toast(_t('common.nameRequired', 'نام الزامی است'), 'error'); return; }
+    if (!payload.name) { toast(_t('common.nameRequired', 'Name is required'), 'error'); return; }
 
     try {
       setLoading(true);
       let catId = _editingCatId;
       if (_editingCatId) {
         await API.categories.update(_editingCatId, payload);
-        toast('دسته‌بندی بروزرسانی شد');
+        toast('Category updated');
       } else {
         const res = await API.categories.create(payload);
         catId     = res.data?.id || res.id;
-        toast('دسته‌بندی ایجاد شد');
+        toast('Category created');
       }
 
       const imgInput = $('catImageInput');
@@ -148,7 +148,7 @@
           await API.categories.uploadPoster(catId, imgInput.files[0]);
           imgInput.value = '';
         } catch (imgErr) {
-          toast('دسته‌بندی ذخیره شد ولی آپلود پوستر ناموفق: ' + imgErr.message, 'info');
+          toast('Category saved, but poster upload failed: ' + imgErr.message, 'info');
         }
       }
 

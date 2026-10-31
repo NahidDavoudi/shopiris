@@ -21,23 +21,23 @@ class Request {
             $this->body = array_merge($this->body, $_FILES);
         }
 
-        // Collect headers - استفاده از getallheaders()
+        // Collect headers - using getallheaders()
         $this->loadHeaders();
     }
 
     private function loadHeaders(): void {
-        // روش اول: استفاده از getallheaders()
+        // Method 1: use getallheaders()
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
             foreach ($headers as $key => $value) {
                 $this->headers[$key] = $value;
-                // همچنین با فرمت استاندارد شده هم ذخیره کن
+                // Also store using the normalized format
                 $normalizedKey = strtoupper(str_replace('-', '_', $key));
                 $this->headers[$normalizedKey] = $value;
             }
         }
         
-        // روش دوم: از $_SERVER به عنوان fallback
+        // Method 2: fall back to $_SERVER
         foreach ($_SERVER as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {
                 $headerName = str_replace('_', '-', substr($key, 5));
@@ -79,7 +79,7 @@ class Request {
     }
 
     public function header(string $key, mixed $default = null): mixed {
-        // جستجو در کلیدهای مختلف
+        // Search across different key formats
         $variations = [
             $key,
             strtolower($key),
@@ -98,20 +98,20 @@ class Request {
     }
 
     public function bearerToken(): ?string {
-        // روش اول: از هدر Authorization
+        // Method 1: from the Authorization header
         $auth = $this->header('Authorization', '');
         
         if (empty($auth)) {
             $auth = $this->header('AUTHORIZATION', '');
         }
         
-        // روش دوم: مستقیماً از getallheaders()
+        // Method 2: directly from getallheaders()
         if (empty($auth) && function_exists('getallheaders')) {
             $headers = getallheaders();
             $auth = $headers['Authorization'] ?? $headers['authorization'] ?? '';
         }
         
-        // استخراج توکن
+        // Extract the token
         if (preg_match('/Bearer\s+(.*)$/i', $auth, $matches)) {
             return trim($matches[1]);
         }

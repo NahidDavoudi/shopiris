@@ -45,7 +45,7 @@ await Promise.all([
 
 const _user = api.auth.currentUser();
 const _el = document.getElementById('sidebarUsername');
-if (_el) _el.textContent = _user?.name || _user?.phone || 'ادمین';
+if (_el) _el.textContent = _user?.name || _user?.phone || 'Admin';
 
 const PAGE_LOADERS = {
   dashboard: window.loadDashboard,
